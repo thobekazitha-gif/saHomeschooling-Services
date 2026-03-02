@@ -1,3 +1,4 @@
+// frontend/src/pages/Login.js
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -292,6 +293,8 @@ const CSS = `
   }
 `;
 
+const API_URL = 'http://localhost:5000/api';
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -335,9 +338,52 @@ const Login = () => {
     const trimmedEmail = email.trim().toLowerCase();
 
     try {
-      // Admin check
+      // Try API login first
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: trimmedEmail,
+          password: password
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Successful login
+        const userData = {
+          role: data.user.role.toLowerCase(),
+          email: data.user.email,
+          id: data.user.id,
+          name: data.user.name || data.user.email.split('@')[0]
+        };
+
+        localStorage.setItem('sah_current_user', JSON.stringify(userData));
+        localStorage.setItem('sah_token', data.token);
+        
+        if (login) login(userData);
+        
+        setAlert({ msg: 'Login successful! Redirecting...', type: 'success' });
+        
+        // Redirect based on role
+        if (userData.role === 'admin') {
+          setTimeout(() => navigate('/admin-dashboard'), 1200);
+        } else if (userData.role === 'provider' || userData.role === 'client') {
+          setTimeout(() => navigate('/client-dashboard'), 1200);
+        } else {
+          setTimeout(() => navigate('/'), 1200);
+        }
+        return;
+      }
+
+      // If API fails, try localStorage fallback for development
+      console.warn('API login failed, trying localStorage fallback:', data.message);
+
+      // Admin check (localStorage)
       if (trimmedEmail === 'admin@sahomeschooling.co.za' && password === 'admin123') {
-        localStorage.setItem('sah_current_user', JSON.stringify({ role: 'admin', email: trimmedEmail }));
+        const userData = { role: 'admin', email: trimmedEmail };
+        localStorage.setItem('sah_current_user', JSON.stringify(userData));
         setAlert({ msg: 'Admin login successful! Redirecting...', type: 'success' });
         setTimeout(() => navigate('/admin-dashboard'), 1200);
         return;
@@ -356,19 +402,22 @@ const Login = () => {
         return;
       }
 
-      // Seed provider check (khan academy)
-      if (trimmedEmail === 'contact@khanacademy.org.za' && password.length >= 6) {
-        const userData = { role: 'client', email: trimmedEmail, id: 'khan', name: 'Khan Academy SA' };
+      // Check localStorage users
+      const users = JSON.parse(localStorage.getItem('sah_users') || '[]');
+      const matchUser = users.find(u => u.email?.toLowerCase() === trimmedEmail);
+      if (matchUser && password.length >= 6) {
+        const userData = { role: 'user', email: trimmedEmail, id: matchUser.id, name: matchUser.name || trimmedEmail.split('@')[0] };
         localStorage.setItem('sah_current_user', JSON.stringify(userData));
         if (login) login(userData);
-        setAlert({ msg: 'Login successful! Redirecting to your dashboard...', type: 'success' });
-        setTimeout(() => navigate('/client-dashboard'), 1200);
+        setAlert({ msg: 'Login successful! Redirecting...', type: 'success' });
+        setTimeout(() => navigate('/'), 1200);
         return;
       }
 
       setAlert({ msg: 'Invalid email or password. Please try again.', type: 'error' });
     } catch (err) {
-      setAlert({ msg: 'An error occurred. Please try again.', type: 'error' });
+      console.error('Login error:', err);
+      setAlert({ msg: 'Network error. Please check your connection and try again.', type: 'error' });
     } finally {
       setLoading(false);
     }
@@ -508,7 +557,8 @@ const Login = () => {
                 <h4><i className="fas fa-flask" /> Demo Credentials</h4>
                 <p>
                   <strong>Admin:</strong> <code>admin@sahomeschooling.co.za</code> / <code>admin123</code><br />
-                  <strong>Client:</strong> <code>contact@khanacademy.org.za</code> + any password (6+ chars)
+                  <strong>Provider:</strong> Use any provider email from the database<br />
+                  <strong>User:</strong> Use any user email from the database
                 </p>
               </div>
             </div>

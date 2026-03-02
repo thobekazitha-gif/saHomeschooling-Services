@@ -67,11 +67,6 @@ const CSS = `
   .ur-pw-eye{position:absolute;right:11px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.88rem;padding:3px;}
   .ur-pw-eye:hover{color:var(--acc);}
 
-  /* Perks */
-  .ur-perks{display:flex;flex-direction:column;gap:8px;background:rgba(201,98,26,0.06);border:1px solid rgba(201,98,26,0.18);border-radius:var(--r);padding:14px 16px;margin-bottom:20px;}
-  .ur-perk{display:flex;align-items:center;gap:9px;font-size:0.83rem;color:var(--mid);}
-  .ur-perk i{color:var(--acc);font-size:0.75rem;width:14px;text-align:center;}
-
   /* Submit */
   .ur-submit{width:100%;padding:13px;background:var(--acc);color:#fff;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;}
   .ur-submit:hover{background:var(--acc-d);}
@@ -94,22 +89,44 @@ const CSS = `
   /* Submit error */
   .ur-err-banner{background:#fff0f0;border:1.5px solid #f5b3b3;border-radius:var(--r);padding:11px 16px;color:#a00c2c;font-size:0.85rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 
+  /* ── Success / Confirmation screen ── */
+  .ur-success-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;padding:36px 28px 32px;}
+  .ur-success-icon{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#d1fae5,#a7f3d0);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 8px 24px rgba(16,185,129,0.25);}
+  .ur-success-icon i{font-size:1.8rem;color:#065f46;}
+  .ur-success-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:800;color:#1a1a1a;margin-bottom:8px;}
+  .ur-success-email{display:inline-block;background:rgba(201,98,26,0.08);border:1px solid rgba(201,98,26,0.2);border-radius:6px;padding:6px 16px;font-size:0.85rem;font-weight:700;color:var(--acc);margin-bottom:16px;}
+  .ur-success-msg{font-size:0.9rem;color:var(--mid);line-height:1.7;margin-bottom:28px;max-width:340px;}
+  .ur-success-steps{width:100%;display:flex;flex-direction:column;gap:10px;margin-bottom:28px;text-align:left;}
+  .ur-success-step{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:var(--card);border-radius:8px;border:1px solid rgba(0,0,0,0.06);}
+  .ur-success-step-num{width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-size:0.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+  .ur-success-step-text{font-size:0.83rem;color:var(--mid);line-height:1.5;}
+  .ur-success-step-text strong{color:var(--dark);display:block;margin-bottom:2px;}
+  .ur-success-login-btn{width:100%;padding:13px;background:var(--acc);color:#fff;border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background 0.15s;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;}
+  .ur-success-login-btn:hover{background:var(--acc-d);}
+  .ur-success-home{margin-top:12px;font-size:0.84rem;color:var(--muted);}
+  .ur-success-home a{color:var(--acc);font-weight:600;text-decoration:none;}
+  .ur-success-home a:hover{text-decoration:underline;}
+
   @media(max-width:480px){.ur-hdr{padding:0 16px;}.ur-card-body{padding:22px 20px 26px;}.ur-hero-inner{padding:32px 16px;}}
 `;
 
+const API_URL = 'http://localhost:5000/api';
+
 const UserRegister = () => {
   const navigate = useNavigate();
-  const { registerUser } = useAuth();
+  const { registerUser: authRegister } = useAuth();
   const { showNotification } = useNotification();
 
-  const [email, setEmail]         = useState('');
-  const [password, setPassword]   = useState('');
-  const [confirm, setConfirm]     = useState('');
-  const [showPw, setShowPw]       = useState(false);
-  const [showCf, setShowCf]       = useState(false);
-  const [errors, setErrors]       = useState({});
-  const [submitErr, setSubmitErr] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const [email, setEmail]             = useState('');
+  const [password, setPassword]       = useState('');
+  const [confirm, setConfirm]         = useState('');
+  const [showPw, setShowPw]           = useState(false);
+  const [showCf, setShowCf]           = useState(false);
+  const [errors, setErrors]           = useState({});
+  const [submitErr, setSubmitErr]     = useState('');
+  const [submitting, setSubmitting]   = useState(false);
+  const [registered, setRegistered]   = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
   useEffect(() => {
     injectHead();
@@ -137,41 +154,51 @@ const UserRegister = () => {
     setErrors({}); setSubmitErr(''); setSubmitting(true);
 
     try {
-      // Try API first, fall back to localStorage
-      const result = registerUser
-        ? await registerUser({ email: email.trim(), password })
-        : { success: false };
-
-      if (!result.success) {
-        // localStorage fallback for dev
-        const users = JSON.parse(localStorage.getItem('sah_users') || '[]');
-        const exists = users.find(u => u.email.toLowerCase() === email.trim().toLowerCase());
-        if (exists) { setSubmitErr('An account with this email already exists.'); setSubmitting(false); return; }
-
-        const newUser = {
-          id: 'user_' + Date.now(),
+      // Call backend API
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           email: email.trim().toLowerCase(),
+          password,
           role: 'USER',
-          registered: new Date().toISOString(),
-          lastLogin: new Date().toISOString(),
-        };
-        users.push(newUser);
-        localStorage.setItem('sah_users', JSON.stringify(users));
+          name: email.split('@')[0], // Default name from email
+        }),
+      });
 
-        // Log the registration event
-        const logs = JSON.parse(localStorage.getItem('sah_auth_logs') || '[]');
-        logs.unshift({ userId: newUser.id, email: newUser.email, role: 'USER', event: 'REGISTER', timestamp: new Date().toISOString() });
-        localStorage.setItem('sah_auth_logs', JSON.stringify(logs.slice(0, 500)));
+      const data = await response.json();
 
-        localStorage.setItem('sah_current_user', JSON.stringify({ role: 'user', email: newUser.email, id: newUser.id }));
-        localStorage.setItem('sah_user', JSON.stringify({ id: newUser.id, email: newUser.email, role: 'USER' }));
-        localStorage.setItem('sah_token', 'local_' + newUser.id);
+      if (!response.ok) {
+        // Handle specific error cases
+        if (response.status === 409) {
+          throw new Error('An account with this email already exists. Please log in instead.');
+        } else {
+          throw new Error(data.message || 'Registration failed');
+        }
       }
 
-      showNotification?.('✅ Account created! Welcome to SA Homeschooling.', 'success');
-      setTimeout(() => navigate('/'), 1200);
+      // Log the registration event
+      try {
+        await fetch(`${API_URL}/auth/log-event`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: email.trim().toLowerCase(),
+            role: 'USER',
+            event: 'REGISTER',
+          }),
+        });
+      } catch (logErr) {
+        console.error('Failed to log event:', logErr);
+      }
+
+      // Show confirmation screen
+      setRegisteredEmail(email.trim().toLowerCase());
+      setRegistered(true);
+      showNotification?.('✅ Account created! You can now log in.', 'success');
     } catch (err) {
-      setSubmitErr('Registration failed. Please try again.');
+      console.error('Registration error:', err);
+      setSubmitErr(err.message || 'Registration failed. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -179,6 +206,85 @@ const UserRegister = () => {
 
   const fe = errors;
 
+  /* ── Confirmation / success screen ── */
+  if (registered) {
+    return (
+      <div className="ur-wrap">
+        <header className="ur-hdr">
+          <button className="ur-hdr-back" onClick={() => navigate('/')}>
+            <i className="fas fa-arrow-left" /> Back to Directory
+          </button>
+          <div className="ur-hdr-div" />
+          <Link to="/" className="ur-hdr-brand">SA Homeschooling</Link>
+        </header>
+
+        <div className="ur-hero">
+          <div className="ur-hero-bg" />
+          <div className="ur-hero-inner">
+            <h1>Account <em>Created!</em></h1>
+          </div>
+        </div>
+
+        <div className="ur-body">
+          <div className="ur-card">
+            <div className="ur-card-head" style={{ background: '#1a7a4a' }}>
+              <h2><i className="fas fa-check-circle" style={{ marginRight: 9, fontSize: '1.1rem' }} /> Registration Successful</h2>
+              <p>Your free account has been created</p>
+            </div>
+            <div className="ur-success-wrap">
+              <div className="ur-success-icon">
+                <i className="fas fa-check" />
+              </div>
+              <div className="ur-success-title">You're all set!</div>
+              <div className="ur-success-email">{registeredEmail}</div>
+              <p className="ur-success-msg">
+                Your account has been successfully created. To access provider profiles and contact details, please log in using your email and password below.
+              </p>
+
+              <div className="ur-success-steps">
+                <div className="ur-success-step">
+                  <div className="ur-success-step-num">1</div>
+                  <div className="ur-success-step-text">
+                    <strong>Account created</strong>
+                    Your details have been saved securely.
+                  </div>
+                </div>
+                <div className="ur-success-step">
+                  <div className="ur-success-step-num">2</div>
+                  <div className="ur-success-step-text">
+                    <strong>Log in to your account</strong>
+                    Use your email and password to sign in from the homepage.
+                  </div>
+                </div>
+                <div className="ur-success-step">
+                  <div className="ur-success-step-num">3</div>
+                  <div className="ur-success-step-text">
+                    <strong>Browse providers</strong>
+                    View full profiles, contact details and reviews.
+                  </div>
+                </div>
+              </div>
+
+              <button
+                className="ur-success-login-btn"
+                onClick={() => {
+                  sessionStorage.setItem('sah_prefill_login_email', registeredEmail);
+                  navigate('/');
+                }}
+              >
+                <i className="fas fa-sign-in-alt" /> Go to Homepage &amp; Log In
+              </button>
+              <div className="ur-success-home">
+                Are you a provider? <Link to="/register/provider">Register a service listing</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Registration form ── */
   return (
     <div className="ur-wrap">
       {/* Header */}
@@ -195,7 +301,7 @@ const UserRegister = () => {
         <div className="ur-hero-bg" />
         <div className="ur-hero-inner">
           <h1>Join as a <em>Family</em></h1>
-          <p>Browse verified tutors, therapists & curriculum providers across South Africa</p>
+          <p>Browse verified tutors, therapists &amp; curriculum providers across South Africa</p>
         </div>
       </div>
 
@@ -204,24 +310,21 @@ const UserRegister = () => {
         <div className="ur-card">
           <div className="ur-card-head">
             <h2><i className="fas fa-user-plus" style={{ marginRight: 9, color: 'var(--acc-l)', fontSize: '1.1rem' }} /> Create Your Account</h2>
-            <p>Free access — browse all provider profiles</p>
+            <p>Free account for homeschooling parents &amp; families</p>
           </div>
           <div className="ur-card-body">
 
-            {/* Perks */}
-            <div className="ur-perks">
-              {[
-                ['fa-search','Browse & search all verified providers'],
-                ['fa-envelope','Send direct enquiries to providers'],
-                ['fa-heart','Save your favourite listings'],
-                ['fa-bell','Get alerts for new providers near you'],
-              ].map(([ic, txt]) => (
-                <div key={txt} className="ur-perk"><i className={`fas ${ic}`} /> {txt}</div>
-              ))}
-            </div>
-
             {submitErr && (
-              <div className="ur-err-banner"><i className="fas fa-exclamation-triangle" /> {submitErr}</div>
+              <div className="ur-err-banner">
+                <i className="fas fa-exclamation-triangle" /> {submitErr}
+                {submitErr.includes('already exists') && (
+                  <div style={{ marginTop: '8px' }}>
+                    <Link to="/login" style={{ color: '#a00c2c', fontWeight: '700', textDecoration: 'underline' }}>
+                      Click here to log in
+                    </Link>
+                  </div>
+                )}
+              </div>
             )}
 
             <div className="ur-field">

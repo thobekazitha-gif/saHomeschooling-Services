@@ -1,3 +1,4 @@
+// frontend/src/pages/HomePage.jsx
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -51,6 +52,71 @@ const CSS = `
   .sah-btn-ghost-nav:hover{border-color:#fff;background:rgba(255,255,255,0.2);}
   .sah-btn-solid-nav{padding:7px 18px;border-radius:5px;background:var(--accent);color:#fff !important;font-weight:700;font-size:0.85rem;border:none;transition:all 0.15s;display:inline-flex;align-items:center;}
   .sah-btn-solid-nav:hover{background:var(--accent-dark);}
+
+  /* PROFILE ICON FOR LOGGED-IN USERS */
+  .sah-profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 2px solid rgba(255,255,255,0.2);
+    text-decoration: none;
+  }
+  .sah-profile-icon:hover {
+    background: var(--accent-dark);
+    transform: scale(1.05);
+    border-color: rgba(255,255,255,0.4);
+  }
+  .sah-nav-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sah-nav-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1.2;
+  }
+  .sah-nav-user-label {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+  }
+  .sah-nav-user-name {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.9);
+    font-weight: 700;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .sah-btn-logout {
+    padding: 7px 18px;
+    border-radius: 5px;
+    background: var(--accent);
+    color: #fff !important;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border: none;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+  }
+  .sah-btn-logout:hover {
+    background: var(--accent-dark);
+  }
 
   /* HERO */
   .sah-hero{position:relative;min-height:88vh;display:flex;align-items:center;overflow:hidden;background:#1e1e1e;}
@@ -118,10 +184,6 @@ const CSS = `
   .sah-plan-cta-link{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;background:var(--accent);color:#fff !important;border:none;border-radius:var(--radius);font-size:0.82rem;font-weight:700;transition:background 0.15s;cursor:pointer;text-decoration:none;}
   .sah-plan-cta-link:hover{background:var(--accent-dark);}
 
-  /* FEATURED BANNER */
-  .sah-featured-banner{background:linear-gradient(135deg,#fff8f2,#fff3e8);border:1px solid rgba(201,98,26,0.18);border-radius:var(--radius-lg);padding:10px 18px;margin-bottom:18px;display:flex;align-items:center;gap:10px;font-size:0.82rem;color:#c9621a;font-weight:600;}
-  .sah-featured-banner i{font-size:0.85rem;}
-
   /* FILTER BAR */
   .sah-filter-bar{background:var(--white);border-bottom:1px solid var(--border);}
   .sah-filter-bar-row{display:flex;align-items:center;gap:6px;padding:16px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;}
@@ -138,11 +200,10 @@ const CSS = `
   .sah-sec-eyebrow{display:block;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--accent);margin-bottom:5px;}
   .sah-sec-header h2{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:800;color:var(--dark);line-height:1.15;}
   .sah-sec-right{font-size:0.84rem;color:var(--muted);}
-  .sah-sec-right a{color:var(--accent);font-weight:600;cursor:pointer;}
   .sah-link-btn{background:none;border:none;padding:0;color:var(--accent);font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:inherit;text-decoration:none;}
   .sah-link-btn:hover{text-decoration:underline;}
   .sah-provider-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
-  .sah-provider-card{background:var(--white);border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:box-shadow 0.2s,transform 0.2s;display:flex;flex-direction:column;}
+  .sah-provider-card{background:var(--white);border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow-sm);transition:box-shadow 0.2s,transform 0.2s;display:flex;flex-direction:column;cursor:pointer;}
   .sah-provider-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
   .sah-provider-card.is-featured-slot{border-color:rgba(201,98,26,0.35);box-shadow:0 2px 12px rgba(201,98,26,0.12);}
   .sah-card-thumb{position:relative;height:165px;overflow:hidden;background:var(--accent-light);flex-shrink:0;}
@@ -152,7 +213,6 @@ const CSS = `
   .sah-card-badges{position:absolute;top:9px;left:9px;display:flex;gap:4px;}
   .sah-cbadge{padding:3px 9px;border-radius:3px;font-size:0.67rem;font-weight:700;text-transform:uppercase;letter-spacing:0.3px;}
   .sah-cbadge-featured{background:var(--red);color:#fff;}
-  .sah-cbadge-spotlight{background:var(--accent);color:#fff;}
   .sah-cbadge-new{background:#0d7d6c;color:#fff;}
   .sah-cbadge-verified{background:#3a3a3a;color:#fff;}
   .sah-card-save{position:absolute;top:9px;right:9px;width:28px;height:28px;border-radius:4px;background:rgba(255,255,255,0.9);border:none;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:0.8rem;transition:color 0.15s;}
@@ -179,9 +239,13 @@ const CSS = `
   .sah-grid-empty i{font-size:2.2rem;margin-bottom:12px;opacity:0.3;display:block;}
   .sah-grid-empty h3{font-family:'Playfair Display',serif;font-size:1.25rem;color:var(--dark);margin-bottom:7px;}
 
-  /* FEATURED SECTION DIVIDER */
-  .sah-section-label{display:flex;align-items:center;gap:12px;margin:0 0 16px;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1.8px;color:var(--accent);}
-  .sah-section-label::after{content:'';flex:1;height:1px;background:rgba(201,98,26,0.2);}
+  /* ALL PROVIDERS EXPANDED */
+  .sah-all-providers-section{padding:0 0 60px;background:var(--light-bg);}
+  .sah-all-divider{border:none;border-top:2px solid var(--border);margin:0 0 40px;}
+  .sah-all-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
+  .sah-all-header h3{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:800;color:var(--dark);}
+  .sah-collapse-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--white);color:var(--muted);font-size:0.82rem;font-weight:600;transition:all 0.15s;}
+  .sah-collapse-btn:hover{border-color:var(--accent);color:var(--accent);}
 
   /* HOW IT WORKS */
   .sah-how-section{padding:76px 0;background:var(--white);}
@@ -241,7 +305,18 @@ const CSS = `
   .sah-modal-switch{text-align:center;margin-top:12px;font-size:0.85rem;color:var(--muted);}
   .sah-modal-switch a{color:var(--accent);font-weight:600;}
 
-  /* REGISTER CHOOSER LINKS */
+  /* LOGIN WALL MODAL */
+  .sah-login-wall-icon{width:56px;height:56px;border-radius:50%;background:var(--accent-light);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:1.4rem;color:var(--accent);}
+  .sah-login-wall-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:800;color:var(--dark);text-align:center;margin-bottom:6px;}
+  .sah-login-wall-desc{font-size:0.86rem;color:var(--muted);text-align:center;line-height:1.6;margin-bottom:20px;}
+  .sah-login-wall-actions{display:flex;flex-direction:column;gap:10px;}
+  .sah-login-wall-btn{width:100%;padding:12px;border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.93rem;cursor:pointer;transition:all 0.15s;border:none;}
+  .sah-login-wall-btn.primary{background:var(--accent);color:#fff;}
+  .sah-login-wall-btn.primary:hover{background:var(--accent-dark);}
+  .sah-login-wall-btn.secondary{background:var(--light-bg);color:var(--dark);border:1.5px solid var(--border);}
+  .sah-login-wall-btn.secondary:hover{border-color:var(--accent);color:var(--accent);}
+
+  /* REGISTER CHOOSER */
   .sah-reg-options{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
   .sah-reg-opt{display:flex;align-items:center;gap:12px;padding:13px 16px;border:1.5px solid var(--border);border-radius:var(--radius);text-decoration:none;color:var(--dark);transition:all 0.15s;background:#fafaf9;}
   .sah-reg-opt:hover{border-color:var(--accent);background:#fff8f2;}
@@ -272,6 +347,7 @@ const CSS = `
     .sah-step{border-right:none!important;border-bottom:1px solid var(--border);}
     .sah-step:last-child{border-bottom:none;}
     .sah-hero-plans-grid{grid-template-columns:1fr;}
+    .sah-nav-user-info{display:none;}
   }
   @media(max-width:480px){
     .sah-provider-grid{grid-template-columns:1fr;}
@@ -291,12 +367,12 @@ const SEED = [
   { id:"s2",name:"Creative Minds Curriculum",category:"curriculum",location:"Cape Town, Western Cape",delivery:"Online",image:"https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&auto=format&fit=crop&q=75",priceFrom:"R4 200/term",badge:"verified",rating:5.0,reviewCount:34,tier:"pro",registered:"2025-01-12T09:00:00Z",status:"approved",primaryCategory:"Curriculum Provider",city:"Cape Town",province:"Western Cape",deliveryMode:"Online",bio:"Award-winning home education curriculum.",tags:["CAPS Aligned","Full Curriculum","Gr R–12"],ageGroups:["5–7","8–10","11–13","14–18"],startingPrice:"R4 200/term",phone:"+27 21 000 2222",contactEmail:"hello@creativeminds.co.za",certifications:"Umalusi Accredited",listingPlan:"pro",reviews:{average:5.0,count:34,items:[{reviewer:"Riana V.",rating:5,text:"Best investment for our homeschool journey."}]} },
   { id:"s3",name:"EduTherapy SA",category:"therapist",location:"Durban, KwaZulu-Natal",delivery:"Hybrid",image:"https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&auto=format&fit=crop&q=75",priceFrom:"R650/session",badge:"featured",rating:4.8,reviewCount:47,tier:"featured",registered:"2025-01-14T10:00:00Z",status:"approved",primaryCategory:"Therapist",city:"Durban",province:"KwaZulu-Natal",deliveryMode:"Hybrid",bio:"Educational therapists specialising in learning differences.",tags:["OT","ADHD","Dyslexia","Learning Support"],ageGroups:["5–7","8–10","11–13"],startingPrice:"R650/session",phone:"+27 31 000 3333",contactEmail:"bookings@edutherapy.co.za",certifications:"HPCSA Registered",listingPlan:"featured",reviews:{average:4.8,count:47,items:[{reviewer:"Lerato M.",rating:5,text:"Transformed our daughter's confidence."}]} },
   { id:"s4",name:"Future Leaders Academy",category:"school",location:"Online — National",delivery:"Online",image:"https://images.unsplash.com/photo-1529390079861-591de3547d13?w=600&auto=format&fit=crop&q=75",priceFrom:"Custom quote",badge:"new",rating:4.7,reviewCount:18,tier:"pro",registered:"2025-01-16T11:00:00Z",status:"approved",primaryCategory:"Online / Hybrid School",city:"Online",province:"Gauteng",deliveryMode:"Online",bio:"A fully accredited online school.",tags:["Online School","Live Classes","National","Accredited"],ageGroups:["8–10","11–13","14–18"],startingPrice:"Contact for quote",phone:"+27 10 000 4444",contactEmail:"enrol@futureleaders.co.za",certifications:"Umalusi Registered",listingPlan:"pro",reviews:{average:4.7,count:18,items:[{reviewer:"Sipho K.",rating:5,text:"Our kids thrive in the structure."}]} },
-  { id:"khan",name:"Khan Academy SA",category:"curriculum",location:"Johannesburg, Gauteng",delivery:"Online",image:"https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&auto=format&fit=crop&q=75",priceFrom:"Free",badge:"featured",rating:4.9,reviewCount:156,tier:"featured",registered:"2025-01-01T00:00:00Z",status:"approved",primaryCategory:"Curriculum Provider",city:"Johannesburg",province:"Gauteng",deliveryMode:"Online",bio:"Free world-class education for anyone.",tags:["Mathematics","Science","Online Learning","Free"],ageGroups:["5–7","8–10","11–13","14–18"],startingPrice:"Free",phone:"+27 11 555 1234",contactEmail:"support@khanacademy.org.za",email:"contact@khanacademy.org.za",certifications:"Khan Academy Certified",listingPlan:"featured",reviews:{average:4.9,count:156,items:[{reviewer:"Sarah J.",rating:5,text:"Excellent resource for homeschool."}]} },
+  { id:"khan",name:"Khan Academy SA",category:"curriculum",location:"Johannesburg, Gauteng",delivery:"Online",image:"https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=600&auto=format&fit=crop&q=75",priceFrom:"Free",badge:"featured",rating:4.9,reviewCount:156,tier:"featured",registered:"2025-01-01T00:00:00Z",status:"approved",primaryCategory:"Curriculum Provider",city:"Johannesburg",province:"Gauteng",deliveryMode:"Online",bio:"Free world-class education for anyone.",tags:["Mathematics","Science","Online Learning","Free"],ageGroups:["5–7","8–10","11–13","14–18"],startingPrice:"Free",phone:"+27 11 555 1234",contactEmail:"support@khanacademy.org.za",certifications:"Khan Academy Certified",listingPlan:"featured",reviews:{average:4.9,count:156,items:[{reviewer:"Sarah J.",rating:5,text:"Excellent resource for homeschool."}]} },
 ];
 
 const CAT_ICON = { tutor:"fa-chalkboard-teacher", therapist:"fa-heart", curriculum:"fa-book-open", school:"fa-school", consultant:"fa-user-tie", extracurricular:"fa-palette" };
 const TIER_LBL = { featured:"Deluxe Package", pro:"Trusted Provider", free:"Community Member" };
-const MAX_FEATURED_SLOTS = 4;
+const FEATURED_SLOT_COUNT = 4;
 
 const PLANS = [
   { id:"community", name:"Community Member", desc:"Basic profile — always free", price:"R0", highlight:false,
@@ -310,42 +386,56 @@ const PLANS = [
     cta:"Get the Deluxe Package", planParam:"Deluxe Package – R399/month" },
 ];
 
-/* ─── FEATURED SLOT HELPERS ─────────────────────────────────────────────────── */
-function getFeaturedSlotProviderIds() {
+/* ─── HELPERS ────────────────────────────────────────────────────────────────── */
+
+function getCurrentUser() {
   try {
-    const slots = JSON.parse(localStorage.getItem("sah_featured_slots") || "[]");
-    return slots
-      .filter(s => s.provider && s.providerId)
-      .map(s => ({ id: s.providerId, name: s.provider, slotId: s.id }));
-  } catch { return []; }
+    const u = localStorage.getItem("sah_current_user");
+    if (!u) return null;
+    const parsed = JSON.parse(u);
+    // Validate that parsed has required fields
+    if (parsed && parsed.role) {
+      return parsed;
+    }
+    return null;
+  } catch { 
+    return null; 
+  }
 }
 
-function getFeaturedSlotProviderNames() {
-  try {
-    const slots = JSON.parse(localStorage.getItem("sah_featured_slots") || "[]");
-    return slots.filter(s => s.provider).map(s => s.provider);
-  } catch { return []; }
+function clearCurrentUser() {
+  localStorage.removeItem("sah_current_user");
+  localStorage.removeItem("sah_token");
 }
 
-/* ─── GET ALL PROVIDERS — featured slots FIRST ──────────────────────────────── */
-function getAll() {
+function isLoggedIn() {
+  return getCurrentUser() !== null;
+}
+
+function getFeaturedSlotInfo() {
   try {
-    const stored   = JSON.parse(localStorage.getItem("sah_providers") || "[]");
-    const allRaw   = [...stored, ...SEED].filter(p => (p.status || "approved") === "approved");
-    const seen = new Set();
-    const all  = allRaw.filter(p => { if (seen.has(p.id)) return false; seen.add(p.id); return true; });
-    const slotIds   = getFeaturedSlotProviderIds();
-    const slotNames = getFeaturedSlotProviderNames();
-    const slotIdSet = new Set(slotIds.map(s => s.id));
-    const marked = all.map(p => {
-      const inSlotById   = slotIdSet.has(p.id);
-      const inSlotByName = slotNames.includes(p.name);
-      return { ...p, _inFeaturedSlot: inSlotById || inSlotByName };
-    });
+    const slots = JSON.parse(localStorage.getItem("sah_featured_slots") || "[]");
+    const ids   = new Set(slots.filter(s => s.providerId).map(s => s.providerId));
+    const names = new Set(slots.filter(s => s.provider).map(s => s.provider));
+    return { ids, names };
+  } catch { return { ids: new Set(), names: new Set() }; }
+}
+
+function getAllProviders() {
+  try {
+    const stored = JSON.parse(localStorage.getItem("sah_providers") || "[]");
+    const allRaw = [...stored, ...SEED].filter(p => (p.status || "approved") === "approved");
+    const seen   = new Set();
+    const all    = allRaw.filter(p => { if (seen.has(p.id)) return false; seen.add(p.id); return true; });
+    const { ids: slotIds, names: slotNames } = getFeaturedSlotInfo();
+    const marked = all.map(p => ({
+      ...p,
+      _inFeaturedSlot: slotIds.has(p.id) || slotNames.has(p.name),
+    }));
+    const tierOrder = { featured: 0, pro: 1, free: 2 };
     return marked.sort((a, b) => {
       if (a._inFeaturedSlot && !b._inFeaturedSlot) return -1;
       if (!a._inFeaturedSlot && b._inFeaturedSlot) return 1;
-      const tierOrder = { featured: 0, pro: 1, free: 2 };
       const td = (tierOrder[a.tier] ?? 2) - (tierOrder[b.tier] ?? 2);
       if (td !== 0) return td;
       return new Date(b.registered) - new Date(a.registered);
@@ -353,10 +443,19 @@ function getAll() {
   } catch { return SEED; }
 }
 
+function buildFeaturedRow(sorted) {
+  const slotProviders  = sorted.filter(p => p._inFeaturedSlot);
+  const otherProviders = sorted.filter(p => !p._inFeaturedSlot);
+  const needed = Math.max(0, FEATURED_SLOT_COUNT - slotProviders.length);
+  return [...slotProviders, ...otherProviders.slice(0, needed)].slice(0, FEATURED_SLOT_COUNT);
+}
+
 function starsStr(r) { return "★".repeat(Math.floor(r)) + (r % 1 >= 0.5 ? "½" : ""); }
 
+/* ─── SUB-COMPONENTS ────────────────────────────────────────────────────────── */
+
 function Badge({ badge, inSlot }) {
-  if (inSlot) return <span className="sah-cbadge sah-cbadge-spotlight"><i className="fas fa-star" style={{ marginRight:3, fontSize:'0.6rem' }} />Spotlight</span>;
+  if (inSlot) return <span className="sah-cbadge sah-cbadge-featured"><i className="fas fa-star" style={{ marginRight:3, fontSize:"0.6rem" }} />Featured</span>;
   if (!badge) return null;
   if (badge === "featured") return <span className="sah-cbadge sah-cbadge-featured">Featured</span>;
   if (badge === "new")      return <span className="sah-cbadge sah-cbadge-new">New</span>;
@@ -368,7 +467,7 @@ function ProviderCard({ p, onView }) {
   const [imgErr, setImgErr] = useState(false);
   const ic = CAT_ICON[p.category] || "fa-star";
   return (
-    <article className={`sah-provider-card${p._inFeaturedSlot ? " is-featured-slot" : ""}`} data-cat={p.category}>
+    <article className={`sah-provider-card${p._inFeaturedSlot ? " is-featured-slot" : ""}`}>
       <div className="sah-card-thumb">
         {p.image && !imgErr
           ? <img src={p.image} alt={p.name} loading="lazy" onError={() => setImgErr(true)} />
@@ -376,7 +475,7 @@ function ProviderCard({ p, onView }) {
         <div className="sah-card-badges">
           <Badge badge={p.badge} inSlot={p._inFeaturedSlot} />
         </div>
-        <button className="sah-card-save"><i className="far fa-heart" /></button>
+        <button className="sah-card-save" aria-label="Save"><i className="far fa-heart" /></button>
       </div>
       <div className="sah-card-provider-row">
         <div className="sah-pav"><i className={`fas ${ic}`} /></div>
@@ -399,7 +498,10 @@ function ProviderCard({ p, onView }) {
           </div>
         )}
         <div className="sah-card-foot">
-          <div><div className="sah-from-label">Starting from</div><div className="sah-card-price">{p.priceFrom || "Contact"}</div></div>
+          <div>
+            <div className="sah-from-label">Starting from</div>
+            <div className="sah-card-price">{p.priceFrom || "Contact"}</div>
+          </div>
           <button className="sah-card-cta" onClick={() => onView(p.id)}>View Profile</button>
         </div>
       </div>
@@ -446,25 +548,31 @@ function PlanCard({ plan, openId, onToggle, allOpen }) {
   );
 }
 
+/* ─── MAIN ────────────────────────────────────────────────────────────────────── */
 export default function HomePage() {
   const navigate = useNavigate();
 
-  const [searchTerm, setSearchTerm]     = useState("");
-  const [searchCat, setSearchCat]       = useState("");
-  const [activeCat, setActiveCat]       = useState("all");
-  const [providers, setProviders]       = useState([]);
-  const [showAll, setShowAll]           = useState(false);
-  const [openPlanId, setOpenPlanId]     = useState(null);
-  const [allPlansOpen, setAllPlansOpen] = useState(false);
-  const [plansVisible, setPlansVisible] = useState(false);
-  const [loginModal, setLoginModal]     = useState(false);
-  const [regModal, setRegModal]         = useState(false);
-  const [loginEmail, setLoginEmail]     = useState("");
-  const [loginPass, setLoginPass]       = useState("");
-  const [nlEmail, setNlEmail]           = useState("");
-  const [nlMsg, setNlMsg]               = useState({ text: "", type: "" });
-  const [toast, setToast]               = useState({ show: false, msg: "", err: false });
-  const [featuredSlotCount, setFeaturedSlotCount] = useState(0);
+  const [currentUser, setCurrentUser]         = useState(null);
+  const [searchTerm, setSearchTerm]           = useState("");
+  const [searchCat, setSearchCat]             = useState("");
+  const [activeCat, setActiveCat]             = useState("all");
+  const [allProviders, setAllProviders]       = useState([]);
+  const [featuredRow, setFeaturedRow]         = useState([]);
+  const [showAllProviders, setShowAllProviders] = useState(false);
+
+  const [openPlanId, setOpenPlanId]           = useState(null);
+  const [allPlansOpen, setAllPlansOpen]       = useState(false);
+  const [plansVisible, setPlansVisible]       = useState(false);
+
+  const [loginModal, setLoginModal]           = useState(false);
+  const [regModal, setRegModal]               = useState(false);
+  const [loginWallModal, setLoginWallModal]   = useState(false);
+
+  const [loginEmail, setLoginEmail]           = useState("");
+  const [loginPass, setLoginPass]             = useState("");
+  const [nlEmail, setNlEmail]                 = useState("");
+  const [nlMsg, setNlMsg]                     = useState({ text: "", type: "" });
+  const [toast, setToast]                     = useState({ show: false, msg: "", err: false });
 
   useEffect(() => {
     injectHead();
@@ -475,17 +583,33 @@ export default function HomePage() {
     }
   }, []);
 
+  // Check login state & pre-fill email from registration redirect
   useEffect(() => {
-    const handler = (e) => { if (e.key === "Escape") { setLoginModal(false); setRegModal(false); } };
+    setCurrentUser(getCurrentUser());
+
+    // If registration page stored a prefill email, open login modal
+    const prefill = sessionStorage.getItem('sah_prefill_login_email');
+    if (prefill) {
+      setLoginEmail(prefill);
+      sessionStorage.removeItem('sah_prefill_login_email');
+      setLoginModal(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handler = e => {
+      if (e.key === "Escape") {
+        setLoginModal(false); setRegModal(false); setLoginWallModal(false);
+      }
+    };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
   useEffect(() => {
-    const all = getAll();
-    setProviders(all);
-    const featCount = all.filter(p => p._inFeaturedSlot).length;
-    setFeaturedSlotCount(Math.min(featCount, MAX_FEATURED_SLOTS));
+    const all = getAllProviders();
+    setAllProviders(all);
+    setFeaturedRow(buildFeaturedRow(all));
   }, []);
 
   const showToast = useCallback((msg, err = false) => {
@@ -493,31 +617,51 @@ export default function HomePage() {
     setTimeout(() => setToast(t => ({ ...t, show: false })), 3500);
   }, []);
 
+  /* Logout handler - completely clear user session */
+  const handleLogout = useCallback(() => {
+    clearCurrentUser();
+    setCurrentUser(null);
+    showToast("You've been logged out.");
+  }, [showToast]);
+
+  /* Login-wall gate for "View Profile" */
+  const viewProfile = id => {
+    if (!isLoggedIn()) { setLoginWallModal(true); return; }
+    navigate("/profile?id=" + id);
+  };
+
   const handleSearch = () => {
     const term = searchTerm.trim().toLowerCase();
-    let list = getAll();
+    let list = getAllProviders();
     if (searchCat) list = list.filter(p => p.category === searchCat);
     if (term) list = list.filter(p =>
       p.name.toLowerCase().includes(term) ||
       (p.location || "").toLowerCase().includes(term) ||
       (p.tags || []).some(t => t.toLowerCase().includes(term))
     );
-    setProviders(list);
-    setShowAll(false);
+    setAllProviders(list);
+    setFeaturedRow(buildFeaturedRow(list));
+    setShowAllProviders(false);
     document.getElementById("sah-providers")?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const filterCat = (cat) => {
+  const filterCat = cat => {
     setActiveCat(cat);
-    setShowAll(false);
-    let list = getAll();
-    if (cat !== "all") list = list.filter(p => p.category === cat);
-    setProviders(list);
+    setShowAllProviders(false);
+    const all = getAllProviders();
+    const list = cat === "all" ? all : all.filter(p => p.category === cat);
+    setAllProviders(list);
+    setFeaturedRow(buildFeaturedRow(list));
   };
 
-  const togglePlan = (id) => { setAllPlansOpen(false); setOpenPlanId(prev => prev === id ? null : id); };
+  const handleShowAll = () => {
+    setShowAllProviders(true);
+    setTimeout(() => document.getElementById("sah-all-providers")?.scrollIntoView({ behavior: "smooth" }), 80);
+  };
 
-  const handleBecomeProvider = (e) => {
+  const togglePlan = id => { setAllPlansOpen(false); setOpenPlanId(prev => prev === id ? null : id); };
+
+  const handleBecomeProvider = e => {
     if (e) e.preventDefault();
     const next = !plansVisible;
     setPlansVisible(next);
@@ -526,8 +670,6 @@ export default function HomePage() {
       setTimeout(() => document.getElementById("sah-plans-anchor")?.scrollIntoView({ behavior: "smooth", block: "center" }), 80);
     }
   };
-
-  const viewProfile = (id) => { navigate("/profile?id=" + id); };
 
   const logAuthEvent = (email, role, event) => {
     try {
@@ -541,9 +683,14 @@ export default function HomePage() {
     const email = loginEmail.trim().toLowerCase();
     if (!email) { showToast("Please enter your email.", true); return; }
 
+    // Clear any existing session first
+    clearCurrentUser();
+
     if (email === "admin@sahomeschooling.co.za" && loginPass === "admin123") {
-      localStorage.setItem("sah_current_user", JSON.stringify({ role: "admin", email }));
+      const u = { role: "admin", email };
+      localStorage.setItem("sah_current_user", JSON.stringify(u));
       logAuthEvent(email, "ADMIN", "LOGIN");
+      setCurrentUser(u);
       setLoginModal(false);
       showToast("Admin login! Redirecting…");
       setTimeout(() => navigate("/admin-dashboard"), 1000);
@@ -553,14 +700,16 @@ export default function HomePage() {
     const users = JSON.parse(localStorage.getItem("sah_users") || "[]");
     const matchUser = users.find(u => u.email?.toLowerCase() === email);
     if (matchUser) {
-      const updatedUsers = users.map(u => u.email?.toLowerCase() === email ? { ...u, lastLogin: new Date().toISOString() } : u);
-      localStorage.setItem("sah_users", JSON.stringify(updatedUsers));
-      localStorage.setItem("sah_current_user", JSON.stringify({ role: "user", email, id: matchUser.id }));
+      const updated = users.map(u => u.email?.toLowerCase() === email ? { ...u, lastLogin: new Date().toISOString() } : u);
+      localStorage.setItem("sah_users", JSON.stringify(updated));
+      const u = { role: "user", email, id: matchUser.id, name: matchUser.name || email.split('@')[0] };
+      localStorage.setItem("sah_current_user", JSON.stringify(u));
       localStorage.setItem("sah_token", "local_" + matchUser.id);
       logAuthEvent(email, "USER", "LOGIN");
+      setCurrentUser(u);
       setLoginModal(false);
+      setLoginWallModal(false);
       showToast("Welcome back!");
-      setTimeout(() => navigate("/"), 800);
       return;
     }
 
@@ -569,11 +718,14 @@ export default function HomePage() {
     if (matchProv) {
       const updated = stored.map(p => (p.email || "").toLowerCase() === email ? { ...p, lastLogin: new Date().toISOString() } : p);
       localStorage.setItem("sah_providers", JSON.stringify(updated));
-      localStorage.setItem("sah_current_user", JSON.stringify({ role: "client", email, id: matchProv.id, name: matchProv.name }));
+      const u = { role: "client", email, id: matchProv.id, name: matchProv.name };
+      localStorage.setItem("sah_current_user", JSON.stringify(u));
       logAuthEvent(email, "PROVIDER", "LOGIN");
+      setCurrentUser(u);
       setLoginModal(false);
+      setLoginWallModal(false);
       showToast("Welcome back, " + matchProv.name + "!");
-      setTimeout(() => navigate("/client-dashboard"), 1000);
+      // Don't auto-redirect, stay on homepage
       return;
     }
 
@@ -588,21 +740,34 @@ export default function HomePage() {
   };
 
   const FILTER_PILLS = [
-    { cat: "all", label: "All Services" },
-    { cat: "tutor", label: "Tutors", icon: "fa-chalkboard-teacher" },
-    { cat: "therapist", label: "Therapists", icon: "fa-heart" },
-    { cat: "curriculum", label: "Curriculum", icon: "fa-book-open" },
-    { cat: "school", label: "Online Schools", icon: "fa-school" },
-    { cat: "consultant", label: "Consultants", icon: "fa-user-tie" },
-    { cat: "extracurricular", label: "Enrichment", icon: "fa-palette" },
+    { cat:"all", label:"All Services" },
+    { cat:"tutor", label:"Tutors", icon:"fa-chalkboard-teacher" },
+    { cat:"therapist", label:"Therapists", icon:"fa-heart" },
+    { cat:"curriculum", label:"Curriculum", icon:"fa-book-open" },
+    { cat:"school", label:"Online Schools", icon:"fa-school" },
+    { cat:"consultant", label:"Consultants", icon:"fa-user-tie" },
+    { cat:"extracurricular", label:"Enrichment", icon:"fa-palette" },
   ];
 
-  const featuredSlotProviders = providers.filter(p => p._inFeaturedSlot).slice(0, MAX_FEATURED_SLOTS);
-  const regularProviders = providers.filter(p => !p._inFeaturedSlot);
-  const displayed = showAll ? providers : [...featuredSlotProviders, ...regularProviders.slice(0, Math.max(0, 8 - featuredSlotProviders.length))];
+  const featuredIds  = new Set(featuredRow.map(p => p.id));
+  const remainingAll = allProviders.filter(p => !featuredIds.has(p.id));
+
+  /* Helper to get dashboard link based on user role */
+  const getDashboardLink = () => {
+    if (!currentUser) return "/";
+    if (currentUser.role === "admin") return "/admin-dashboard";
+    if (currentUser.role === "client" || currentUser.role === "PROVIDER") return "/client-dashboard";
+    return "/";
+  };
+
+  /* Friendly display name for logged-in user */
+  const userDisplayName = currentUser?.name || currentUser?.email?.split("@")[0] || currentUser?.email || "User";
+  const userInitial = userDisplayName.charAt(0).toUpperCase();
 
   return (
     <div className="sah-wrap">
+
+      {/* ── HEADER ── */}
       <header className="sah-header">
         <div className="sah-container sah-nav-inner">
           <Link to="/" className="sah-brand">
@@ -620,15 +785,39 @@ export default function HomePage() {
               Magazine <i className="fas fa-arrow-up-right-from-square" style={{ fontSize:"0.65rem" }} />
             </a>
           </nav>
+
+          {/* ── NAV CTAs: logged-out vs logged-in ── */}
           <div className="sah-nav-ctas">
-            <button className="sah-btn-ghost-nav" onClick={() => setLoginModal(true)}>Log In</button>
-            <button className="sah-btn-solid-nav" onClick={() => setRegModal(true)}>
-              <i className="fas fa-user-plus" style={{ marginRight:6, fontSize:'0.8rem' }} /> Register
-            </button>
+            {currentUser ? (
+              /* ── LOGGED IN: greeting + profile icon ── */
+              <div className="sah-nav-user">
+                <div className="sah-nav-user-info">
+                  <span className="sah-nav-user-label">Logged in as</span>
+                  <span className="sah-nav-user-name" title={currentUser.email}>
+                    {currentUser.role === "admin" ? "admin" : userDisplayName}
+                  </span>
+                </div>
+                <Link to={getDashboardLink()} className="sah-profile-icon">
+                  {userInitial}
+                </Link>
+                <button className="sah-btn-logout" onClick={handleLogout}>
+                  <i className="fas fa-sign-out-alt" />
+                </button>
+              </div>
+            ) : (
+              /* ── LOGGED OUT: login + register ── */
+              <>
+                <button className="sah-btn-ghost-nav" onClick={() => setLoginModal(true)}>Log In</button>
+                <button className="sah-btn-solid-nav" onClick={() => setRegModal(true)}>
+                  <i className="fas fa-user-plus" style={{ marginRight:6, fontSize:"0.8rem" }} /> Register
+                </button>
+              </>
+            )}
           </div>
         </div>
       </header>
 
+      {/* ── HERO ── */}
       <section className="sah-hero">
         <div className="sah-hero-bg" />
         <div className="sah-container">
@@ -661,10 +850,7 @@ export default function HomePage() {
               <div className="sah-hero-tagline" id="sah-plans-anchor">
                 <h2>Are You a Homeschooling Service Provider?</h2>
                 <p>Reach thousands of South African homeschooling families. List your services on our dedicated directory — free to start.</p>
-                <button
-                  className={`sah-become-btn${plansVisible ? " active" : ""}`}
-                  onClick={handleBecomeProvider}
-                >
+                <button className={`sah-become-btn${plansVisible ? " active" : ""}`} onClick={handleBecomeProvider}>
                   <i className="fas fa-store" />
                   {plansVisible ? "Hide Packages" : "Become a Service Provider"}
                   <i className="fas fa-chevron-down sah-chev" />
@@ -687,6 +873,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── FILTER BAR ── */}
       <div className="sah-filter-bar">
         <div className="sah-container">
           <div className="sah-filter-bar-row">
@@ -701,77 +888,75 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* ── FEATURED 4 PROVIDERS ── */}
       <section className="sah-providers-section" id="sah-providers">
         <div className="sah-container">
           <div className="sah-sec-header">
             <div>
               <span className="sah-sec-eyebrow">Service Providers</span>
-              <h2>
-                {featuredSlotCount > 0
-                  ? `${featuredSlotCount} Spotlight Provider${featuredSlotCount > 1 ? "s" : ""} + More`
-                  : "Recently Added Providers"}
-              </h2>
             </div>
             <div className="sah-sec-right">
-              {providers.length > 8 && !showAll && (
-                <button className="sah-link-btn" onClick={() => setShowAll(true)}>
-                  View all {providers.length} providers →
+              {!showAllProviders && allProviders.length > 0 && (
+                <button className="sah-link-btn" onClick={handleShowAll}>
+                  See all providers →
                 </button>
               )}
-              {showAll && providers.length > 8 && (
-                <button className="sah-link-btn" onClick={() => setShowAll(false)}>← Show fewer</button>
+              {showAllProviders && (
+                <button className="sah-link-btn" onClick={() => setShowAllProviders(false)}>
+                  ← Hide all providers
+                </button>
               )}
             </div>
           </div>
 
-          {featuredSlotCount > 0 && (
-            <div className="sah-featured-banner">
-              <i className="fas fa-star" />
-              <span>
-                <strong>{featuredSlotCount} Spotlight Provider{featuredSlotCount > 1 ? "s" : ""}</strong> — admin-featured and shown first
-              </span>
-            </div>
-          )}
-
-          {providers.length === 0 ? (
+          {featuredRow.length === 0 ? (
             <div className="sah-provider-grid">
               <div className="sah-grid-empty">
                 <i className="fas fa-search" />
                 <h3>No providers found</h3>
                 <p>Be the first to list — it's free.</p>
-                <br />
-                <button className="sah-plan-cta-link" onClick={() => setRegModal(true)} style={{ marginTop:12 }}>
+                <button className="sah-plan-cta-link" onClick={() => setRegModal(true)} style={{ marginTop:16 }}>
                   <i className="fas fa-plus" /> Add Your Listing
                 </button>
               </div>
             </div>
           ) : (
-            <>
-              {featuredSlotCount > 0 && (
-                <>
-                  <div className="sah-section-label">
-                    <i className="fas fa-star" style={{ color:"var(--accent)" }} /> Spotlight Providers
-                  </div>
-                  <div className="sah-provider-grid" style={{ marginBottom: 28 }}>
-                    {featuredSlotProviders.map(p => (
-                      <ProviderCard key={p.id} p={p} onView={viewProfile} />
-                    ))}
-                  </div>
-                  <div className="sah-section-label">
-                    <i className="fas fa-list" style={{ color:"#999" }} /> All Providers
-                  </div>
-                </>
-              )}
-              <div className="sah-provider-grid">
-                {(showAll ? regularProviders : regularProviders.slice(0, Math.max(0, 8 - featuredSlotProviders.length))).map(p => (
-                  <ProviderCard key={p.id} p={p} onView={viewProfile} />
-                ))}
-              </div>
-            </>
+            <div className="sah-provider-grid">
+              {featuredRow.map(p => (
+                <ProviderCard key={p.id} p={p} onView={viewProfile} />
+              ))}
+            </div>
           )}
         </div>
       </section>
 
+      {/* ── ALL PROVIDERS ── */}
+      {showAllProviders && (
+        <section className="sah-all-providers-section" id="sah-all-providers">
+          <div className="sah-container">
+            <hr className="sah-all-divider" />
+            <div className="sah-all-header">
+              <h3>All Providers</h3>
+              <button className="sah-collapse-btn" onClick={() => setShowAllProviders(false)}>
+                <i className="fas fa-chevron-up" /> Collapse
+              </button>
+            </div>
+            {remainingAll.length === 0 ? (
+              <p style={{ color:"var(--muted)", fontSize:"0.9rem" }}>
+                All providers are already shown above.
+              </p>
+            ) : (
+              <div className="sah-provider-grid">
+                {remainingAll.map(p => (
+                  <ProviderCard key={p.id} p={p} onView={viewProfile} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── HOW IT WORKS ── */}
       <section className="sah-how-section" id="sah-how">
         <div className="sah-container">
           <div className="sah-how-header">
@@ -797,12 +982,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── FOOTER ── */}
       <footer className="sah-footer">
         <div className="sah-container">
           <div className="sah-footer-grid">
             <div className="sah-footer-brand">
-              
-              
+              <span className="sah-footer-logo">SA Homeschooling Directory</span>
+              <p>Connecting South African homeschooling families with verified tutors, therapists, curriculum providers and education specialists nationwide.</p>
               <div className="sah-footer-newsletter">
                 <div className="sah-footer-newsletter-row">
                   <input type="email" value={nlEmail} onChange={e => setNlEmail(e.target.value)} placeholder="Your email address…" />
@@ -854,7 +1040,38 @@ export default function HomePage() {
         </div>
       </footer>
 
-      <div className={`sah-modal-overlay${regModal ? " open" : ""}`} onClick={e => { if (e.target === e.currentTarget) setRegModal(false); }}>
+      {/* ══════════════════════ MODALS ══════════════════════ */}
+
+      {/* ── LOGIN WALL ── */}
+      <div className={`sah-modal-overlay${loginWallModal ? " open" : ""}`}
+        onClick={e => { if (e.target === e.currentTarget) setLoginWallModal(false); }}>
+        <div className="sah-modal-box">
+          <div className="sah-modal-head" style={{ background:"var(--accent)" }}>
+            <h2>Members Only</h2>
+            <p>Please log in to view provider profiles</p>
+            <button className="sah-modal-close" onClick={() => setLoginWallModal(false)}><i className="fas fa-times" /></button>
+          </div>
+          <div className="sah-modal-body">
+            <div className="sah-login-wall-icon"><i className="fas fa-lock" /></div>
+            <div className="sah-login-wall-title">Login required</div>
+            <div className="sah-login-wall-desc">
+              Create a free account or log in to view full provider profiles, contact details, reviews and more.
+            </div>
+            <div className="sah-login-wall-actions">
+              <button className="sah-login-wall-btn primary" onClick={() => { setLoginWallModal(false); setLoginModal(true); }}>
+                <i className="fas fa-sign-in-alt" style={{ marginRight:8 }} /> Log In
+              </button>
+              <button className="sah-login-wall-btn secondary" onClick={() => { setLoginWallModal(false); setRegModal(true); }}>
+                <i className="fas fa-user-plus" style={{ marginRight:8 }} /> Create a Free Account
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── REGISTER CHOOSER ── */}
+      <div className={`sah-modal-overlay${regModal ? " open" : ""}`}
+        onClick={e => { if (e.target === e.currentTarget) setRegModal(false); }}>
         <div className="sah-modal-box">
           <div className="sah-modal-head">
             <h2>Create an Account</h2>
@@ -867,7 +1084,7 @@ export default function HomePage() {
                 <div className="sah-reg-opt-icon user"><i className="fas fa-user" /></div>
                 <div>
                   <div className="sah-reg-opt-title">Register as a User</div>
-                  <div className="sah-reg-opt-desc">Email + password only — browse all provider profiles</div>
+                  <div className="sah-reg-opt-desc">Parent or family — browse all provider profiles</div>
                 </div>
                 <i className="fas fa-chevron-right" style={{ marginLeft:"auto", color:"#ccc", fontSize:"0.8rem" }} />
               </Link>
@@ -881,13 +1098,16 @@ export default function HomePage() {
               </Link>
             </div>
             <div className="sah-modal-switch">
-              Already have an account? <button className="sah-link-btn" onClick={() => { setRegModal(false); setLoginModal(true); }}>Log in</button>
+              Already have an account?{" "}
+              <button className="sah-link-btn" onClick={() => { setRegModal(false); setLoginModal(true); }}>Log in</button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className={`sah-modal-overlay${loginModal ? " open" : ""}`} onClick={e => { if (e.target === e.currentTarget) setLoginModal(false); }}>
+      {/* ── LOGIN ── */}
+      <div className={`sah-modal-overlay${loginModal ? " open" : ""}`}
+        onClick={e => { if (e.target === e.currentTarget) setLoginModal(false); }}>
         <div className="sah-modal-box">
           <div className="sah-modal-head">
             <h2>Log In</h2>
@@ -909,13 +1129,16 @@ export default function HomePage() {
             </div>
             <button className="sah-modal-btn" onClick={handleLogin}>Log In</button>
             <div className="sah-modal-switch">
-              New here? <button className="sah-link-btn" onClick={() => { setLoginModal(false); setRegModal(true); }}>Create a free account</button>
+              New here?{" "}
+              <button className="sah-link-btn" onClick={() => { setLoginModal(false); setRegModal(true); }}>Create a free account</button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className={`sah-toast${toast.show ? " show" : ""}`} style={{ background: toast.err ? "#b91c1c" : "var(--grey)" }}>
+      {/* ── TOAST ── */}
+      <div className={`sah-toast${toast.show ? " show" : ""}`}
+        style={{ background: toast.err ? "#b91c1c" : "var(--grey)" }}>
         <i className={`fas ${toast.err ? "fa-exclamation-circle" : "fa-check-circle"}`} />
         <span>{toast.msg}</span>
       </div>

@@ -103,6 +103,15 @@ const SEED_PROVIDERS = [
   },
 ];
 
+function isLoggedIn() {
+  try {
+    const u = localStorage.getItem("sah_current_user");
+    if (!u) return false;
+    const parsed = JSON.parse(u);
+    return !!(parsed && parsed.role);
+  } catch { return false; }
+}
+
 function findProvider(id, email) {
   try {
     const stored = JSON.parse(localStorage.getItem('sah_providers') || '[]');
@@ -110,11 +119,9 @@ function findProvider(id, email) {
     let found = null;
     if (id) found = all.find(p => p.id === id) || null;
     else if (email) found = all.find(p => p.email === email || p.contactEmail === email) || null;
-    // Normalize so no field is undefined/object when rendered as text
     if (found) {
       return {
         ...found,
-        // Ensure string fields are always strings
         name: found.name || '',
         bio: found.bio || '',
         primaryCategory: found.primaryCategory || found.category || '',
@@ -133,7 +140,6 @@ function findProvider(id, email) {
         memberships: found.memberships || '',
         clearance: found.clearance || '',
         availabilityNotes: found.availabilityNotes || '',
-        // Ensure array fields are always arrays
         tags: Array.isArray(found.tags) ? found.tags : [],
         ageGroups: Array.isArray(found.ageGroups) ? found.ageGroups : [],
         availabilityDays: Array.isArray(found.availabilityDays) ? found.availabilityDays : [],
@@ -148,7 +154,6 @@ function findProvider(id, email) {
 const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const ORANGE = '#c2510a';
 
-/* ── Card style tokens ── */
 const S = {
   hero: {
     background: 'rgba(255, 255, 255, 0.06)',
@@ -186,16 +191,139 @@ const Heading = ({ children, style = {}, as: Tag = 'h2' }) => (
   <Tag className="card-heading" style={{ color: '#1a1a1a', ...style }}>{children}</Tag>
 );
 
+/* ── LOGIN WALL STYLES ── */
+const loginWallStyles = `
+  .sah-profile-login-wall {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f2f2f2;
+    padding: 40px 20px;
+  }
+  .sah-profile-login-box {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.13);
+    max-width: 460px;
+    width: 100%;
+    overflow: hidden;
+  }
+  .sah-profile-login-header {
+    background: #5a5a5a;
+    padding: 32px 36px 26px;
+    text-align: center;
+  }
+  .sah-profile-login-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(201,98,26,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 1.5rem;
+    color: #c9621a;
+  }
+  .sah-profile-login-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.55rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .sah-profile-login-header p {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.68);
+    line-height: 1.55;
+  }
+  .sah-profile-login-body {
+    padding: 28px 36px 32px;
+  }
+  .sah-profile-login-desc {
+    font-size: 0.9rem;
+    color: #666;
+    text-align: center;
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+  .sah-profile-login-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .sah-profile-login-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .sah-profile-login-btn.primary {
+    background: #c9621a;
+    color: #fff;
+  }
+  .sah-profile-login-btn.primary:hover { background: #a84e12; }
+  .sah-profile-login-btn.secondary {
+    background: #f2f2f2;
+    color: #3a3a3a;
+    border: 1.5px solid rgba(0,0,0,0.10);
+  }
+  .sah-profile-login-btn.secondary:hover {
+    border-color: #c9621a;
+    color: #c9621a;
+  }
+  .sah-profile-login-divider {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #aaa;
+    margin: 4px 0;
+  }
+  .sah-profile-login-back {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 0.84rem;
+    color: #888;
+  }
+  .sah-profile-login-back a {
+    color: #c9621a;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .sah-profile-login-back a:hover { text-decoration: underline; }
+`;
+
 const Profile = () => {
   const [searchParams] = useSearchParams();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  // Detect if we arrived here from the client dashboard
   const fromDashboard = searchParams.get('from') === 'dashboard';
 
   useEffect(() => {
+    /* Inject login wall styles */
+    if (!document.getElementById('sah-profile-login-styles')) {
+      const s = document.createElement('style');
+      s.id = 'sah-profile-login-styles';
+      s.textContent = loginWallStyles;
+      document.head.appendChild(s);
+    }
+
+    /* Check login */
+    setLoggedIn(isLoggedIn());
+
     const id = searchParams.get('id');
     const email = searchParams.get('email');
     let found = findProvider(id, email);
@@ -240,6 +368,54 @@ const Profile = () => {
     </>
   );
 
+  /* ── LOGIN WALL — shown to guests who are not logged in ── */
+  if (!loggedIn) return (
+    <>
+      <Header />
+      <div className="sah-profile-login-wall">
+        <div className="sah-profile-login-box">
+          <div className="sah-profile-login-header">
+            <div className="sah-profile-login-icon">
+              <i className="fas fa-lock" />
+            </div>
+            <h2>Members Only</h2>
+            <p>You need to be logged in to view provider profiles.</p>
+          </div>
+          <div className="sah-profile-login-body">
+            <p className="sah-profile-login-desc">
+              Create a free account or log in to access full provider profiles, contact details, reviews and more.
+            </p>
+            <div className="sah-profile-login-actions">
+              <Link
+                to="/"
+                state={{ openLogin: true }}
+                className="sah-profile-login-btn primary"
+                onClick={() => {
+                  /* Store intent so HomePage can auto-open the login modal */
+                  sessionStorage.setItem('sah_open_login', '1');
+                  sessionStorage.setItem('sah_login_redirect', window.location.pathname + window.location.search);
+                }}
+              >
+                <i className="fas fa-sign-in-alt" /> Log In to Your Account
+              </Link>
+              <div className="sah-profile-login-divider">or</div>
+              <Link
+                to="/register/user"
+                className="sah-profile-login-btn secondary"
+              >
+                <i className="fas fa-user-plus" /> Create a Free Account
+              </Link>
+            </div>
+            <div className="sah-profile-login-back">
+              <Link to="/">← Back to the directory</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
+
   if (!profile) return (
     <>
       <Header />
@@ -263,7 +439,6 @@ const Profile = () => {
   return (
     <>
       {fromDashboard ? (
-        /* ── Slim nav shown when previewing from dashboard — single bar, no double header ── */
         <header style={{
           position: 'sticky', top: 0, zIndex: 1000,
           height: '68px', background: '#5a5a5a',
@@ -417,7 +592,6 @@ const Profile = () => {
               <Eyebrow>Services</Eyebrow>
               <Heading>What We Offer</Heading>
 
-              {/* Tags / subjects */}
               {profile.tags?.length > 0 && (
                 <div className="tag-cloud" style={{ marginBottom: '12px' }}>
                   {profile.tags.map((tag, idx) => (
@@ -426,10 +600,8 @@ const Profile = () => {
                 </div>
               )}
 
-              {/* Services list — each service is an object with title, description, subjects, ageGroups, deliveryMode */}
               {profile.services?.length > 0 ? (
                 profile.services.map((service, idx) => {
-                  // service may be a string (old format) or object (new format)
                   if (typeof service === 'string') {
                     return <div key={idx} className="tag" style={{ background: '#ede9e3', color: ORANGE, border: `1px solid ${ORANGE}`, fontWeight: 600, display: 'inline-block', marginRight: 8, marginBottom: 8, padding: '4px 12px', borderRadius: 6 }}>{service}</div>;
                   }
@@ -464,7 +636,6 @@ const Profile = () => {
                 <p style={{ color: '#888', fontStyle: 'italic', fontSize: '0.88rem' }}>No services listed yet.</p>
               )}
 
-              {/* Top-level ageGroups fallback (seed data & old format) */}
               {profile.ageGroups?.length > 0 && (
                 <>
                   <div className="section-divider"></div>
@@ -519,7 +690,6 @@ const Profile = () => {
         {/* ─────────── SIDEBAR ─────────── */}
         <aside className="sidebar" id="contactSection">
 
-          {/* Upgrade (free tier) */}
           {tier === 'free' && (
             <div className="card" id="upgradeCard" style={S.gray}>
               <div className="card-pad" style={{ textAlign: 'center' }}>
@@ -595,7 +765,6 @@ const Profile = () => {
                   <div className="dc-icon wa"><i className="fab fa-whatsapp"></i></div>
                   <div className="dc-meta">
                     <div className="dc-label">WhatsApp</div>
-                    {/* Use dedicated whatsapp field, fall back to phone */}
                     <div className="dc-value">{profile.whatsapp || profile.phone || '—'}</div>
                   </div>
                 </div>
