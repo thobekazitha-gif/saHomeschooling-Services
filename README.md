@@ -35,6 +35,7 @@ A full-stack web platform connecting homeschooling families in South Africa with
 - Prisma + database (production / when backend is connected)
 
 ## Project Structure
+```
 SAHOMESCHOOLING-SERVICES/
 ├── backend/
 │   ├── prisma/                 # Prisma schema & migrations
@@ -71,6 +72,7 @@ SAHOMESCHOOLING-SERVICES/
 │
 ├── .gitignore
 └── README.md
+```
 text## Getting Started
 
 ### Prerequisites
@@ -84,7 +86,7 @@ text## Getting Started
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/saHomeschooling/saHomeschooling-Services
    cd SAHOMESCHOOLING-SERVICES
 
 Install backend dependenciesBashcd backend
@@ -122,19 +124,3 @@ MIT
 
 Built with for South African homeschooling families
 © 2025 SA Homeschooling Services Directory
-text### Next steps you may want to do:
-
-
-   ```markdown
-   <image-card alt="React" src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" ></image-card>
-   <image-card alt="Node.js" src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" ></image-card>
-   <image-card alt="Express" src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" ></image-card>
-Let me know if you'd like to add sections like:
-
-Deployment instructions
-API documentation
-Contributing guide
-Roadmap
-```
-
-Happy coding! 🚀5.6sFast
