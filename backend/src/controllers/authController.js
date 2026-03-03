@@ -1,220 +1,224 @@
 // backend/src/controllers/authController.js
 const { PrismaClient } = require('@prisma/client');
-const bcrypt           = require('bcryptjs');
-const jwt              = require('jsonwebtoken');
-const { jwtSecret }    = require('../config');
-const { sendError }    = require('../utils');
+const bcrypt  = require('bcryptjs');
+const jwt     = require('jsonwebtoken');
+const { jwtSecret, jwtExpiry, adminEmail, adminPassword, adminName } = require('../config');
+const { sendError } = require('../utils');
 
 const prisma = new PrismaClient();
 
-// ─────────────────────────────────────────────────────────────
-//  Hardcoded admin credentials
-//  Email:    admin@sahomeschooling.co.za
-//  Password: admin@123
-// ─────────────────────────────────────────────────────────────
-const ADMIN_EMAIL    = 'admin@sahomeschooling.co.za';
-const ADMIN_PASSWORD = 'admin@123';
+// ── token helper ──────────────────────────────────────────────
+const signToken = (payload) =>
+  jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiry });
+
+// ── public user shape ─────────────────────────────────────────
+const publicUser = (u) => ({
+  id:          u.id,
+  email:       u.email,
+  role:        u.role,
+  name:        u.name,
+  accountType: u.accountType,
+});
 
 // ─────────────────────────────────────────────────────────────
 //  POST /api/auth/register
-//  Creates a User row.
-//  For PROVIDER registrations the Registration.js form sends
-//  a second request to POST /api/providers — so we do NOT
-//  try to create the providerProfile here.  That keeps the
-//  two concerns cleanly separated and avoids schema mismatches.
+//  Creates a User row only.
+//  The frontend sends a second POST /api/providers request to
+//  create the ProviderProfile (keeps concerns separate).
 // ─────────────────────────────────────────────────────────────
 const register = async (req, res) => {
   const { email, password, name, role = 'PROVIDER', accountType } = req.body;
 
-  if (!email || !password) {
+  if (!email || !password)
     return sendError(res, 400, 'Email and password are required.');
-  }
+
+  const trimmed = email.trim().toLowerCase();
+
+  if (trimmed === adminEmail)
+    return sendError(res, 409, 'This email address is reserved.');
 
   try {
-    // Block anyone trying to register with the hardcoded admin address
-    if (email.toLowerCase().trim() === ADMIN_EMAIL) {
-      return sendError(res, 409, 'This email address is reserved.');
-    }
+    const existing = await prisma.user.findUnique({ where: { email: trimmed } });
+    if (existing)
+      return sendError(res, 409, 'An account with this email already exists.');
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
-    });
-    if (existingUser) return sendError(res, 409, 'An account with this email already exists.');
+    const hashed = await bcrypt.hash(password, 10);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Role must be a valid enum value: PROVIDER | USER
+    const safeRole = ['PROVIDER', 'USER'].includes(role.toUpperCase())
+      ? role.toUpperCase()
+      : 'PROVIDER';
 
     const user = await prisma.user.create({
       data: {
-        email:       email.toLowerCase().trim(),
-        password:    hashedPassword,
+        email:       trimmed,
+        password:    hashed,
         name:        name || null,
-        role,                                          // 'PROVIDER' | 'USER'
-        accountType: accountType || (role === 'USER' ? 'parent' : 'provider'),
+        role:        safeRole,
+        accountType: accountType || (safeRole === 'USER' ? 'user' : 'provider'),
         lastLogin:   new Date(),
       },
     });
 
-    const token = jwt.sign({ id: user.id, role: user.role }, jwtSecret, { expiresIn: '1d' });
-
+    const token = signToken({ id: user.id, role: user.role });
     console.log(`[AUTH] REGISTER | ${user.email} | ${user.role}`);
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
-      data: {
-        token,
-        user: {
-          id:          user.id,
-          email:       user.email,
-          role:        user.role,
-          name:        user.name,
-          accountType: user.accountType,
-        },
-      },
-      // Keep legacy shape so Registration.js can read userData.user.id
-      user: {
-        id:          user.id,
-        email:       user.email,
-        role:        user.role,
-        name:        user.name,
-        accountType: user.accountType,
-      },
       message: 'Account created successfully.',
+      token,
+      user:    publicUser(user),
+      // Legacy shape kept so older frontend code still works
+      data:    { token, user: publicUser(user) },
     });
   } catch (err) {
     console.error('[AUTH] Register error:', err);
-    sendError(res, 500, 'Registration failed. Please try again.');
+    return sendError(res, 500, 'Registration failed. Please try again.');
   }
 };
 
 // ─────────────────────────────────────────────────────────────
 //  POST /api/auth/login
-//  Checks hardcoded admin first, then database users.
 // ─────────────────────────────────────────────────────────────
 const login = async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
+  if (!email || !password)
     return sendError(res, 400, 'Email and password are required.');
-  }
+
+  const trimmed = email.trim().toLowerCase();
 
   try {
-    // ── Hardcoded admin login ──
-    if (email.toLowerCase().trim() === ADMIN_EMAIL) {
-      if (password !== ADMIN_PASSWORD) {
+    // ── Hardcoded admin (no DB row required) ──
+    if (trimmed === adminEmail) {
+      if (password !== adminPassword)
         return sendError(res, 401, 'Invalid credentials.');
-      }
 
-      const token = jwt.sign(
-        { id: 'admin_hardcoded', role: 'ADMIN' },
-        jwtSecret,
-        { expiresIn: '1d' }
-      );
-
-      console.log(`[AUTH] LOGIN | ${ADMIN_EMAIL} | ADMIN (hardcoded)`);
+      const adminUser = {
+        id:          'admin_hardcoded',
+        email:       adminEmail,
+        role:        'ADMIN',
+        name:        adminName,
+        accountType: 'admin',
+      };
+      const token = signToken({ id: 'admin_hardcoded', role: 'ADMIN' });
+      console.log(`[AUTH] LOGIN | ${adminEmail} | ADMIN`);
 
       return res.json({
         success: true,
-        data: {
-          token,
-          user: {
-            id:          'admin_hardcoded',
-            email:       ADMIN_EMAIL,
-            role:        'ADMIN',
-            name:        'Administrator',
-            accountType: 'admin',
-          },
-        },
-        user: {
-          id:          'admin_hardcoded',
-          email:       ADMIN_EMAIL,
-          role:        'ADMIN',
-          name:        'Administrator',
-          accountType: 'admin',
-        },
+        message: 'Login successful.',
+        token,
+        user:    adminUser,
+        data:    { token, user: adminUser },
       });
     }
 
-    // ── Regular database user login ──
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
-    });
+    // ── DB login ──
+    const user = await prisma.user.findUnique({ where: { email: trimmed } });
     if (!user) return sendError(res, 401, 'Invalid credentials.');
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return sendError(res, 401, 'Invalid credentials.');
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) return sendError(res, 401, 'Invalid credentials.');
 
-    // Update lastLogin timestamp
     await prisma.user.update({
       where: { id: user.id },
       data:  { lastLogin: new Date() },
     });
 
-    const token = jwt.sign({ id: user.id, role: user.role }, jwtSecret, { expiresIn: '1d' });
-
+    const token = signToken({ id: user.id, role: user.role });
     console.log(`[AUTH] LOGIN | ${user.email} | ${user.role}`);
 
-    res.json({
+    return res.json({
       success: true,
-      data: {
-        token,
-        user: {
-          id:          user.id,
-          email:       user.email,
-          role:        user.role,
-          name:        user.name,
-          accountType: user.accountType,
-        },
-      },
-      user: {
-        id:          user.id,
-        email:       user.email,
-        role:        user.role,
-        name:        user.name,
-        accountType: user.accountType,
-      },
+      message: 'Login successful.',
+      token,
+      user:    publicUser(user),
+      data:    { token, user: publicUser(user) },
     });
   } catch (err) {
     console.error('[AUTH] Login error:', err);
-    sendError(res, 500, 'Login failed. Please try again.');
+    return sendError(res, 500, 'Login failed. Please try again.');
   }
 };
 
 // ─────────────────────────────────────────────────────────────
-//  GET /api/auth/users
-//  Returns all database users for the admin dashboard.
-//  The hardcoded admin is injected at the top of the list.
+//  GET /api/auth/me
+// ─────────────────────────────────────────────────────────────
+const me = async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer '))
+      return sendError(res, 401, 'No token provided.');
+
+    let decoded;
+    try {
+      decoded = jwt.verify(authHeader.slice(7), jwtSecret);
+    } catch {
+      return sendError(res, 401, 'Invalid or expired token.');
+    }
+
+    if (decoded.id === 'admin_hardcoded') {
+      return res.json({
+        success: true,
+        data: {
+          id:          'admin_hardcoded',
+          email:       adminEmail,
+          role:        'ADMIN',
+          name:        adminName,
+          accountType: 'admin',
+        },
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where:  { id: decoded.id },
+      select: { id: true, email: true, role: true, name: true, accountType: true, lastLogin: true },
+    });
+    if (!user) return sendError(res, 404, 'User not found.');
+
+    return res.json({ success: true, data: user });
+  } catch (err) {
+    console.error('[AUTH] /me error:', err);
+    return sendError(res, 500, 'Server error.');
+  }
+};
+
+// ─────────────────────────────────────────────────────────────
+//  POST /api/auth/logout
+// ─────────────────────────────────────────────────────────────
+const logout = (_req, res) => {
+  console.log('[AUTH] LOGOUT');
+  res.json({ success: true, message: 'Logged out successfully.' });
+};
+
+// ─────────────────────────────────────────────────────────────
+//  GET /api/auth/users  (ADMIN only)
 // ─────────────────────────────────────────────────────────────
 const getUsers = async (req, res) => {
   try {
     const dbUsers = await prisma.user.findMany({
       select: {
-        id:          true,
-        email:       true,
-        role:        true,
-        name:        true,
-        accountType: true,
-        createdAt:   true,
-        lastLogin:   true,
+        id: true, email: true, role: true, name: true,
+        accountType: true, createdAt: true, lastLogin: true,
       },
       orderBy: { createdAt: 'desc' },
     });
 
-    // Prepend the hardcoded admin so it always shows in the dashboard
     const adminEntry = {
       id:          'admin_hardcoded',
-      email:       ADMIN_EMAIL,
+      email:       adminEmail,
       role:        'ADMIN',
-      name:        'Administrator',
+      name:        adminName,
       accountType: 'admin',
       createdAt:   null,
       lastLogin:   null,
     };
 
-    res.json({ success: true, data: [adminEntry, ...dbUsers] });
+    return res.json({ success: true, data: [adminEntry, ...dbUsers] });
   } catch (err) {
     console.error('[AUTH] getUsers error:', err);
-    sendError(res, 500, 'Failed to fetch users.');
+    return sendError(res, 500, 'Failed to fetch users.');
   }
 };
 
-module.exports = { register, login, getUsers };
+module.exports = { register, login, me, logout, getUsers };
