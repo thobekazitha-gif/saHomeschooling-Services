@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import './assets/css/responsive-overrides.css';
+import './assets/css/responsiveOverides.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

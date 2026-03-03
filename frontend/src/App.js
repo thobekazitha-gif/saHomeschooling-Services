@@ -9,7 +9,7 @@ import HomePage from './pages/HomePage';
 import AdminDashboard from './pages/AdminDashboard';
 import ClientDashboard from './pages/ClientDashboard';
 import Profile from './pages/Profile';
-import './assets/css/responsive-overrides.css';
+import './assets/css/responsiveOverides.css';
 
 function App() {
   return (
