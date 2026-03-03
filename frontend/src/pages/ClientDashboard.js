@@ -321,7 +321,7 @@ const DASH_CSS = `
 
 /* ═══════════════════════════════════════════════════ */
 const ClientDashboard = () => {
-  const { user, updateUserPlan } = useAuth();
+  const { updateUserPlan } = useAuth();
   const { showNotification }     = useNotification();
   const navigate                 = useNavigate();
   const photoInputRef            = useRef(null);

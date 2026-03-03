@@ -1,6 +1,5 @@
 // frontend/src/pages/AdminDashboard.js
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
 import Header from '../components/common/Header';
 import Footer from '../components/common/Footer';
