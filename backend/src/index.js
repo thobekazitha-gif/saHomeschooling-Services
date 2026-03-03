@@ -2,6 +2,11 @@ require('dotenv').config();
 
 const { execSync } = require('child_process');
 try {
+  console.log('Running prisma generate...');
+  execSync('node node_modules/prisma/build/index.js generate', {
+    stdio: 'inherit',
+    cwd: __dirname + '/..'
+  });
   console.log('Running database migrations...');
   execSync('node node_modules/prisma/build/index.js migrate deploy', {
     stdio: 'inherit',
