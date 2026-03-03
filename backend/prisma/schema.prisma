@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -74,18 +75,15 @@ model ProviderProfile {
   degrees             String?
   memberships         String?
   clearance           String?
-
-  // ── File / image storage (base64 strings) ──────────────────
-  profilePhoto        String?   // base64 data URL — profile picture
-  certFile            String?   // base64 — uploaded qualification/cert document
-  certFileName        String?   // original filename e.g. "BEd_Honours.pdf"
-  certFileType        String?   // MIME type e.g. "application/pdf"
-  clearanceFile       String?   // base64 — police clearance document
-  clearanceFileName   String?   // original filename
-  clearanceFileType   String?   // MIME type
-
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  profilePhoto        String?
+  certFile            String?
+  certFileName        String?
+  certFileType        String?
+  clearanceFile       String?
+  clearanceFileName   String?
+  clearanceFileType   String?
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
 
   reviews       Review[]
   featuredSlots FeaturedSlot[]
