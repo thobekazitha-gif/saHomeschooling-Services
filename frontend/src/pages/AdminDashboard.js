@@ -1,6 +1,5 @@
 // frontend/src/pages/AdminDashboard.js
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotification } from '../contexts/NotificationContext';
 import Header from '../components/common/Header';
@@ -8,7 +7,6 @@ import Footer from '../components/common/Footer';
 import Modal from '../components/common/Modal';
 import ReviewCard from '../components/admin/ReviewCard';
 import { reviewsMock } from '../utils/constants';
-import { escapeHtml } from '../utils/helpers';
 import '../assets/css/dashboard.css';
 
 /* ── localStorage helpers ────────────────────────────────── */
@@ -927,9 +925,8 @@ function resolvePackageKey(provider) {
    ADMIN DASHBOARD
 ═══════════════════════════════════════════════════════════ */
 const AdminDashboard = () => {
-  const { user }              = useAuth();
   const { showNotification }  = useNotification();
-  const navigate              = useNavigate();
+  
 
   const [activeTab, setActiveTab]         = useState('all');
   const [providers, setProviders]         = useState([]);
@@ -1154,13 +1151,7 @@ const AdminDashboard = () => {
   });
   const timeFilteredUsers = applyTimeFilter(filteredUsers, userTimeFilter);
 
-  const signupStats = {
-    week:    registeredUsers.filter(u => isWithinDays(u.registered, 7)).length,
-    month:   registeredUsers.filter(u => isWithinDays(u.registered, 30)).length,
-    months3: registeredUsers.filter(u => isWithinMonths(u.registered, 3)).length,
-    year:    registeredUsers.filter(u => isThisYear(u.registered)).length,
-    total:   registeredUsers.length,
-  };
+  
 
   const revenueProviders = paidProviders.filter(p => {
     const matchSearch = !revenueSearch ||

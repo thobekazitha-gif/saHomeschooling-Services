@@ -110,7 +110,6 @@ function registerUserLocally({ username, email, password }) {
     const users = JSON.parse(localStorage.getItem('sah_users') || '[]');
     const emailLower = email.trim().toLowerCase();
 
-    // Check duplicates
     if (users.find(u => (u.email || '').toLowerCase() === emailLower)) {
       return { success: false, error: 'email_taken' };
     }
@@ -154,9 +153,9 @@ function registerUserLocally({ username, email, password }) {
 }
 
 const UserRegister = () => {
-  const navigate             = useNavigate();
+  const navigate                = useNavigate();
   const { registerUser, login } = useAuth();
-  const { showNotification } = useNotification();
+  const { showNotification }    = useNotification();
 
   const [username,   setUsername]   = useState('');
   const [email,      setEmail]      = useState('');
@@ -181,21 +180,20 @@ const UserRegister = () => {
   const validate = () => {
     const e = {};
     const uname = username.trim();
-    // Username validation
-    if (!uname || uname.length < 3)    e.username = 'Username must be at least 3 characters.';
-    else if (/\s/.test(uname))         e.username = 'Username cannot contain spaces.';
-    else if (!/^[a-zA-Z0-9_.\-]+$/.test(uname)) e.username = 'Username may only contain letters, numbers, _ . -';
-    
-    // Relaxed email: just needs @ and some characters around it
+    if (!uname || uname.length < 3)              e.username = 'Username must be at least 3 characters.';
+    else if (/\s/.test(uname))                   e.username = 'Username cannot contain spaces.';
+    // FIXED: removed unnecessary \- escape character
+    else if (!/^[a-zA-Z0-9_.-]+$/.test(uname))  e.username = 'Username may only contain letters, numbers, _ . -';
+
     const emailTrimmed = email.trim();
     if (!emailTrimmed) {
       e.email = 'Please enter your email address.';
     } else if (emailTrimmed.indexOf('@') < 1) {
       e.email = 'Please enter a valid email address (must include @).';
     }
-    
+
     if (!password || password.length < 8) e.password = 'Password must be at least 8 characters.';
-    if (password !== confirm)          e.confirm = 'Passwords do not match.';
+    if (password !== confirm)             e.confirm  = 'Passwords do not match.';
     return e;
   };
 
@@ -206,14 +204,9 @@ const UserRegister = () => {
 
     const emailLower = email.trim().toLowerCase();
 
-    // Try AuthContext registerUser first, then fall back to local
     try {
       if (typeof registerUser === 'function') {
-        const result = await registerUser({
-          username: username.trim(),
-          email: emailLower,
-          password,
-        });
+        const result = await registerUser({ username: username.trim(), email: emailLower, password });
 
         if (result?.success) {
           const displayName = username.trim();
@@ -222,7 +215,6 @@ const UserRegister = () => {
           setTimeout(() => navigate('/'), 1500);
           return;
         }
-
         if (result?.error === 'email_taken') {
           setSubmitErr('An account with this email already exists. Please log in instead.');
           setSubmitting(false);
@@ -233,13 +225,11 @@ const UserRegister = () => {
           setSubmitting(false);
           return;
         }
-        // If API failed for other reasons, fall through to local
       }
     } catch (apiErr) {
       console.warn('API registerUser failed, using localStorage fallback:', apiErr?.message);
     }
 
-    // ── Local fallback ──
     const localResult = registerUserLocally({ username: username.trim(), email: emailLower, password });
 
     if (!localResult.success) {
@@ -254,11 +244,8 @@ const UserRegister = () => {
       return;
     }
 
-    // Log the new user in via AuthContext if possible
     try {
-      if (typeof login === 'function') {
-        login(localResult.user);
-      }
+      if (typeof login === 'function') login(localResult.user);
     } catch (e) {
       console.warn('Could not call login after local registration:', e);
     }
@@ -320,7 +307,6 @@ const UserRegister = () => {
 
             <div className="ur-cols">
 
-              {/* ── LEFT: form fields ── */}
               <div>
                 <div className="ur-field">
                   <label><i className="fas fa-at" /> Username <span style={{ color: 'var(--acc)' }}>*</span></label>
@@ -404,7 +390,6 @@ const UserRegister = () => {
 
               <div className="ur-col-sep" />
 
-              {/* ── RIGHT: perks ── */}
               <div>
                 <div className="ur-perks">
                   <div className="ur-perks-title">Why create an account?</div>
