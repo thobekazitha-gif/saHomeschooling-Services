@@ -1,0 +1,485 @@
+/* ═══════════════════════════════════════════════════════════════════
+   SA HOMESCHOOLING — DEFINITIVE RESPONSIVE OVERRIDES v3
+   
+   IMPORT THIS FILE LAST in App.js or index.js:
+     import './assets/css/responsive-overrides.css';
+   
+   Why !important everywhere: Each page injects its own <style> tags
+   at runtime. Injected styles always win over linked stylesheets UNLESS
+   the linked stylesheet uses !important. This file wins every fight.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── GLOBAL RESETS ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box !important;
+}
+
+html, body {
+  overflow-x: hidden !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+}
+
+img, video, iframe, embed, object {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* ─── HEADER / NAV ───────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  header,
+  .header,
+  .sah-header,
+  nav,
+  .navbar {
+    padding: 0.5rem 1rem !important;
+    flex-wrap: wrap !important;
+  }
+
+  .nav-links,
+  .header-links,
+  .sah-nav-links {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  .header-logo,
+  .sah-logo {
+    font-size: 1.1rem !important;
+  }
+}
+
+/* ─── HOMEPAGE ───────────────────────────────────────────────────── */
+/* Hero section */
+.sah-hero,
+[class*="sah-hero"] {
+  width: 100% !important;
+  overflow: hidden !important;
+}
+
+.sah-hero-search-inner,
+[class*="hero-search"] {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.sah-hero-search-inner input,
+.sah-hero-search-inner select,
+.sah-hero-search-inner button,
+[class*="hero-search"] input,
+[class*="hero-search"] select,
+[class*="hero-search"] button {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+@media (max-width: 768px) {
+  .sah-hero-search-inner,
+  [class*="hero-search"] {
+    flex-direction: column !important;
+  }
+
+  .sah-hero-search-inner input,
+  .sah-hero-search-inner select,
+  .sah-hero-search-inner button,
+  [class*="hero-search"] input,
+  [class*="hero-search"] select,
+  [class*="hero-search"] button {
+    width: 100% !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* Category cards / feature grid */
+@media (max-width: 900px) {
+  .sah-categories,
+  .sah-features,
+  .sah-cards,
+  [class*="sah-grid"],
+  [class*="sah-cards"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 540px) {
+  .sah-categories,
+  .sah-features,
+  .sah-cards,
+  [class*="sah-grid"],
+  [class*="sah-cards"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ─── LOGIN PAGE ─────────────────────────────────────────────────── */
+.sah-login-main,
+[class*="login-main"],
+[class*="login-wrapper"] {
+  min-height: 0 !important;
+}
+
+/* Two-column login layout collapses on tablet */
+@media (max-width: 900px) {
+  .sah-login-container,
+  [class*="login-container"],
+  [class*="login-layout"] {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+
+  /* Hide the decorative left image panel */
+  .sah-login-left,
+  .sah-login-image,
+  [class*="login-left"],
+  [class*="login-image"] {
+    display: none !important;
+  }
+
+  .sah-login-right,
+  .sah-login-form,
+  [class*="login-right"],
+  [class*="login-form-panel"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 2rem 1.25rem !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+  }
+}
+
+/* Forgot-password / any login modal — bottom sheet on phone */
+@media (max-width: 600px) {
+  .sah-forgot-modal,
+  .sah-login-modal,
+  [class*="forgot-modal"],
+  [class*="login-modal"] {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    transform: none !important;
+    border-radius: 16px 16px 0 0 !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    padding: 1.5rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ─── ADMIN DASHBOARD ────────────────────────────────────────────── */
+/* Tab bar — scrollable strip instead of wrapping/overflowing */
+.admin-tabs,
+[class*="admin-tabs"] {
+  display: flex !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  flex-wrap: nowrap !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: none !important;
+  gap: 0 !important;
+  width: 100% !important;
+  max-width: 100vw !important;
+}
+
+.admin-tabs::-webkit-scrollbar,
+[class*="admin-tabs"]::-webkit-scrollbar {
+  display: none !important;
+}
+
+.admin-tabs button,
+.admin-tabs .tab,
+[class*="admin-tabs"] button,
+[class*="admin-tabs"] .tab {
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  padding: 0.6rem 1rem !important;
+  font-size: 0.85rem !important;
+}
+
+/* Admin layout — single column on small screens */
+@media (max-width: 1024px) {
+  .admin-layout,
+  .admin-container,
+  [class*="admin-layout"] {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+  }
+}
+
+/* Floating profile card on admin — bottom sheet on phone */
+@media (max-width: 600px) {
+  .admin-profile-card,
+  .admin-floating-card,
+  [class*="admin-profile"] {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    transform: none !important;
+    border-radius: 16px 16px 0 0 !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    z-index: 1000 !important;
+  }
+}
+
+/* Admin tables — horizontal scroll container */
+.admin-table-wrapper,
+[class*="admin-table"] {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+@media (max-width: 768px) {
+  table,
+  .admin-table {
+    min-width: 600px !important;
+  }
+}
+
+/* ─── CLIENT DASHBOARD ───────────────────────────────────────────── */
+/* Main two-pane grid collapses to one column */
+@media (max-width: 1024px) {
+  .cd-layout,
+  [class*="cd-layout"],
+  [class*="client-layout"],
+  [class*="client-dashboard-layout"] {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+  }
+
+  /* Sidebar becomes horizontal strip */
+  .cd-sidebar,
+  [class*="cd-sidebar"],
+  [class*="client-sidebar"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    padding: 0.5rem !important;
+    gap: 0.5rem !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .cd-sidebar-item,
+  .cd-nav-item,
+  [class*="cd-sidebar"] a,
+  [class*="cd-sidebar"] button {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .cd-main,
+  [class*="cd-main"],
+  [class*="client-main"] {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 1rem !important;
+  }
+}
+
+/* Chat / messaging area */
+@media (max-width: 768px) {
+  .cd-chat,
+  .chat-panel,
+  [class*="chat-panel"],
+  [class*="cd-chat"] {
+    height: 60vh !important;
+    min-height: 300px !important;
+  }
+
+  .cd-chat-input,
+  .chat-input-area,
+  [class*="chat-input"] {
+    flex-wrap: wrap !important;
+  }
+
+  .cd-chat-input input,
+  [class*="chat-input"] input {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* ─── PROFILE PAGE ───────────────────────────────────────────────── */
+/* Two-column profile grid collapses */
+@media (max-width: 1100px) {
+  .profile-layout,
+  .profile-top,
+  .profile-grid,
+  [class*="profile-layout"],
+  [class*="profile-grid"],
+  [class*="profile-top"] {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+  }
+
+  .profile-sidebar,
+  .profile-left,
+  [class*="profile-sidebar"],
+  [class*="profile-left"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .profile-main,
+  .profile-right,
+  [class*="profile-main"],
+  [class*="profile-right"] {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* Profile avatar / hero area */
+@media (max-width: 600px) {
+  .profile-hero,
+  [class*="profile-hero"] {
+    padding: 1.5rem 1rem !important;
+    text-align: center !important;
+  }
+
+  .profile-avatar,
+  [class*="profile-avatar"] {
+    width: 80px !important;
+    height: 80px !important;
+    margin: 0 auto 1rem !important;
+  }
+
+  .profile-stats,
+  [class*="profile-stats"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ─── REGISTRATION PAGE ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .sah-registration-hero,
+  [class*="registration-hero"] {
+    padding: 1.5rem 1rem !important;
+  }
+
+  .sah-registration-form,
+  .registration-form,
+  [class*="registration-form"] {
+    padding: 1.5rem 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Multi-column form fields collapse to one */
+  .form-row,
+  .form-grid,
+  [class*="form-row"],
+  [class*="form-grid"] {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-field,
+  .form-group,
+  [class*="form-field"],
+  [class*="form-group"] {
+    width: 100% !important;
+  }
+}
+
+/* ─── MODALS (all pages) ─────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .modal,
+  .modal-overlay,
+  .modal-content,
+  [class*="modal-content"],
+  [class*="modal-inner"] {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: auto !important;
+    transform: none !important;
+    border-radius: 16px 16px 0 0 !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 1.5rem 1.25rem !important;
+    margin: 0 !important;
+  }
+}
+
+/* ─── BUTTONS ────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .btn-group,
+  .button-group,
+  [class*="btn-group"],
+  [class*="button-group"] {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .btn-group button,
+  .btn-group a,
+  .button-group button,
+  .button-group a {
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+/* ─── FOOTER ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .footer-container,
+  [class*="footer-container"] {
+    grid-template-columns: 1fr !important;
+    text-align: center !important;
+  }
+
+  .social-icons,
+  [class*="social-icons"] {
+    justify-content: center !important;
+  }
+
+  footer,
+  [class*="footer"] {
+    padding: 2rem 1rem 1rem !important;
+  }
+}
+
+/* ─── UTILITY: PREVENT ANY ELEMENT FROM BREAKING LAYOUT ─────────── */
+@media (max-width: 768px) {
+  /* Nothing should ever be wider than the viewport */
+  div, section, article, aside, main, header, nav, footer {
+    max-width: 100vw !important;
+  }
+
+  /* Prevent fixed-width elements from creating scroll */
+  [style*="width: "],
+  [style*="min-width: "] {
+    max-width: 100% !important;
+  }
+}

@@ -95,7 +95,6 @@ function findProvider(id, email) {
 const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const ORANGE = '#c2510a';
 
-/* ── Inject all styles ── */
 const injectStyles = () => {
   if (document.getElementById('profile-v2-styles')) return;
   const style = document.createElement('style');
@@ -106,462 +105,296 @@ const injectStyles = () => {
       font-family: 'DM Sans', 'Segoe UI', sans-serif;
       background: #f4f1ec;
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
-    /* ── Members Only Gate ── */
+    /* ── Members Gate ── */
     .pv2-members-gate {
       min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       background: linear-gradient(135deg, #f4f1ec 0%, #ede9e3 100%);
-      padding: 32px 16px;
+      padding: 24px 16px;
     }
     .pv2-gate-card {
-      background: #fff;
-      border-radius: 18px;
+      background: #fff; border-radius: 18px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-      padding: 48px 40px;
-      text-align: center;
-      max-width: 480px;
-      width: 100%;
+      padding: 40px 32px; text-align: center;
+      max-width: 460px; width: 100%;
       border: 1px solid rgba(0,0,0,0.06);
     }
     .pv2-gate-icon {
-      width: 80px; height: 80px;
+      width: 72px; height: 72px;
       background: linear-gradient(135deg, ${ORANGE}, #e07a35);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 24px;
-      box-shadow: 0 8px 24px rgba(194,81,10,0.3);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; box-shadow: 0 8px 24px rgba(194,81,10,0.3);
     }
-    .pv2-gate-icon i { color: #fff; font-size: 2rem; }
+    .pv2-gate-icon i { color: #fff; font-size: 1.8rem; }
     .pv2-gate-title {
       font-family: 'Playfair Display', serif;
-      font-size: 1.8rem; font-weight: 900;
-      color: #1a1a1a; margin-bottom: 12px; line-height: 1.2;
+      font-size: clamp(1.4rem, 4vw, 1.8rem); font-weight: 900;
+      color: #1a1a1a; margin-bottom: 10px; line-height: 1.2;
     }
-    .pv2-gate-subtitle {
-      color: #666; font-size: 0.95rem; line-height: 1.6; margin-bottom: 32px;
-    }
-    .pv2-gate-actions {
-      display: flex; flex-direction: column; gap: 12px;
-    }
+    .pv2-gate-subtitle { color: #666; font-size: 0.92rem; line-height: 1.6; margin-bottom: 24px; }
+    .pv2-gate-actions { display: flex; flex-direction: column; gap: 10px; }
     .pv2-gate-btn-primary {
-      display: block; width: 100%; padding: 14px 24px;
-      background: ${ORANGE}; color: #fff;
-      border: none; border-radius: 10px;
-      font-family: 'DM Sans', sans-serif; font-size: 0.97rem; font-weight: 700;
+      display: block; width: 100%; padding: 13px 24px;
+      background: ${ORANGE}; color: #fff; border: none; border-radius: 10px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700;
       cursor: pointer; text-decoration: none;
       transition: background 0.15s, transform 0.12s;
       box-shadow: 0 4px 14px rgba(194,81,10,0.3);
     }
     .pv2-gate-btn-primary:hover { background: #a84412; transform: translateY(-1px); }
     .pv2-gate-btn-secondary {
-      display: block; width: 100%; padding: 13px 24px;
+      display: block; width: 100%; padding: 12px 24px;
       background: transparent; color: ${ORANGE};
       border: 2px solid ${ORANGE}; border-radius: 10px;
-      font-family: 'DM Sans', sans-serif; font-size: 0.97rem; font-weight: 700;
-      cursor: pointer; text-decoration: none;
-      transition: all 0.15s;
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; text-decoration: none; transition: all 0.15s;
     }
     .pv2-gate-btn-secondary:hover { background: rgba(194,81,10,0.06); }
     .pv2-gate-divider {
       display: flex; align-items: center; gap: 12px;
-      color: #bbb; font-size: 0.82rem; margin: 4px 0;
+      color: #bbb; font-size: 0.8rem; margin: 4px 0;
     }
-    .pv2-gate-divider::before, .pv2-gate-divider::after {
-      content: ''; flex: 1; height: 1px; background: #e5e5e5;
-    }
+    .pv2-gate-divider::before, .pv2-gate-divider::after { content:''; flex:1; height:1px; background:#e5e5e5; }
     .pv2-gate-perks {
-      display: flex; flex-direction: column; gap: 10px;
+      display: flex; flex-direction: column; gap: 9px;
       background: #faf9f7; border-radius: 10px;
-      padding: 16px 20px; margin-bottom: 28px; text-align: left;
+      padding: 14px 18px; margin-bottom: 24px; text-align: left;
     }
-    .pv2-gate-perk {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 0.86rem; color: #444; font-weight: 500;
-    }
+    .pv2-gate-perk { display: flex; align-items: center; gap: 10px; font-size: 0.84rem; color: #444; font-weight: 500; }
     .pv2-gate-perk i { color: ${ORANGE}; width: 16px; text-align: center; }
 
-    /* ── Page wrapper ── */
-    .pv2-inner {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 28px 32px 60px;
-    }
+    /* ── Page inner ── */
+    .pv2-inner { max-width: 1280px; margin: 0 auto; padding: 24px 20px 56px; }
 
     /* ── TOP GRID ── */
     .pv2-top-grid {
       display: grid;
       grid-template-columns: 62% 1fr;
-      gap: 24px;
-      align-items: start;
-      margin-bottom: 24px;
+      gap: 20px; align-items: start; margin-bottom: 20px;
     }
 
     /* ── Left panel ── */
     .pv2-left {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      background: #ede9e3;
-      border-radius: 14px;
-      border: 1px solid #dedad4;
-      overflow: hidden;
+      display: flex; flex-direction: column;
+      background: #ede9e3; border-radius: 14px;
+      border: 1px solid #dedad4; overflow: hidden;
       box-shadow: 0 4px 16px rgba(0,0,0,0.06);
     }
+    .pv2-services-section { padding: 24px 24px 20px; border-bottom: 1px solid rgba(0,0,0,0.08); }
+    .pv2-about-section    { padding: 20px 24px 24px; }
 
-    .pv2-services-section {
-      padding: 28px 30px 24px;
-      border-bottom: 1px solid rgba(0,0,0,0.08);
-    }
-
-    .pv2-about-section {
-      padding: 24px 30px 28px;
-    }
-
-    /* ── Eyebrow / heading shared ── */
+    /* ── Shared typography ── */
     .pv2-eyebrow {
-      display: block;
-      color: ${ORANGE};
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 0.68rem;
-      letter-spacing: 0.9px;
-      margin-bottom: 6px;
+      display: block; color: ${ORANGE}; font-weight: 700;
+      text-transform: uppercase; font-size: 0.66rem; letter-spacing: 0.9px; margin-bottom: 5px;
     }
     .pv2-heading {
       font-family: 'Playfair Display', Georgia, serif;
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: #1a1a1a;
-      margin: 0 0 16px 0;
-      line-height: 1.25;
+      font-size: clamp(1.1rem, 2.5vw, 1.3rem); font-weight: 800;
+      color: #1a1a1a; margin: 0 0 14px; line-height: 1.25;
     }
-    .pv2-heading-sm {
-      font-size: 1rem;
-      margin-bottom: 12px;
-    }
+    .pv2-heading-sm { font-size: 1rem; margin-bottom: 10px; }
 
-    /* ── Tag cloud ── */
-    .pv2-tag-cloud {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-      margin-bottom: 12px;
-    }
+    /* ── Tags ── */
+    .pv2-tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
     .pv2-tag {
-      display: inline-flex;
-      align-items: center;
-      background: #ffffff;
-      color: ${ORANGE};
-      border: 1.5px solid ${ORANGE};
-      font-weight: 600;
-      padding: 7px 16px;
-      border-radius: 30px;
-      font-size: 0.84rem;
-      line-height: 1;
-      white-space: nowrap;
+      display: inline-flex; align-items: center;
+      background: #ffffff; color: ${ORANGE}; border: 1.5px solid ${ORANGE};
+      font-weight: 600; padding: 6px 14px; border-radius: 30px;
+      font-size: 0.82rem; line-height: 1; white-space: nowrap;
       box-shadow: 0 2px 6px rgba(194,81,10,0.08);
-      transition: background 0.18s, color 0.18s;
-      cursor: default;
+      transition: background 0.18s, color 0.18s; cursor: default;
     }
     .pv2-tag:hover { background: ${ORANGE}; color: #fff; }
 
+    /* Service cards */
     .pv2-svc-card {
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 18px 20px;
-      margin-bottom: 12px;
-      border: 1px solid rgba(194,81,10,0.15);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-      transition: box-shadow 0.2s;
+      background: #ffffff; border-radius: 12px; padding: 16px 18px;
+      margin-bottom: 10px; border: 1px solid rgba(194,81,10,0.15);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: box-shadow 0.2s;
     }
     .pv2-svc-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
     .pv2-svc-card:last-child { margin-bottom: 0; }
-    .pv2-svc-title { font-weight: 700; color: #1a1a1a; font-size: 1.02rem; margin-bottom: 6px; }
-    .pv2-svc-desc  { color: #555; font-size: 0.88rem; margin-bottom: 12px; line-height: 1.6; }
-    .pv2-svc-pills { display: flex; flex-wrap: wrap; gap: 7px; }
-    .pv2-svc-pill-subj {
-      background: #f5f0ea; color: ${ORANGE}; border: 1px solid ${ORANGE};
-      font-size: 0.78rem; font-weight: 500; padding: 4px 12px; border-radius: 20px;
-    }
-    .pv2-svc-pill-age {
-      background: ${ORANGE}; color: #fff;
-      font-size: 0.78rem; font-weight: 600; padding: 4px 12px; border-radius: 20px;
-    }
-    .pv2-svc-delivery { margin-top: 10px; font-size: 0.78rem; color: #666; }
-    .pv2-svc-delivery i { color: ${ORANGE}; margin-right: 5px; }
+    .pv2-svc-title { font-weight: 700; color: #1a1a1a; font-size: 0.98rem; margin-bottom: 5px; }
+    .pv2-svc-desc  { color: #555; font-size: 0.86rem; margin-bottom: 10px; line-height: 1.6; }
+    .pv2-svc-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pv2-svc-pill-subj { background:#f5f0ea; color:${ORANGE}; border:1px solid ${ORANGE}; font-size:0.76rem; font-weight:500; padding:3px 11px; border-radius:20px; }
+    .pv2-svc-pill-age  { background:${ORANGE}; color:#fff; font-size:0.76rem; font-weight:600; padding:3px 11px; border-radius:20px; }
+    .pv2-svc-delivery  { margin-top:9px; font-size:0.76rem; color:#666; }
+    .pv2-svc-delivery i { color:${ORANGE}; margin-right:5px; }
 
-    /* ── Age group pills ── */
-    .pv2-age-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.07); }
-    .pv2-age-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    /* Age groups */
+    .pv2-age-section { margin-top:18px; padding-top:14px; border-top:1px solid rgba(0,0,0,0.07); }
+    .pv2-age-pills   { display:flex; flex-wrap:wrap; gap:7px; }
     .pv2-age-pill {
-      display: inline-flex; align-items: center;
-      background: #ffffff; color: ${ORANGE};
-      border: 1.5px solid ${ORANGE}; font-weight: 600;
-      padding: 6px 14px; border-radius: 28px; font-size: 0.82rem;
-      box-shadow: 0 2px 6px rgba(194,81,10,0.08);
+      display:inline-flex; align-items:center;
+      background:#ffffff; color:${ORANGE}; border:1.5px solid ${ORANGE};
+      font-weight:600; padding:5px 13px; border-radius:28px; font-size:0.8rem;
+      box-shadow:0 2px 6px rgba(194,81,10,0.08);
     }
 
-    .pv2-about-text {
-      color: #3a3a3a;
-      line-height: 1.75;
-      font-size: 0.93rem;
-      margin: 0;
-    }
+    .pv2-about-text { color:#3a3a3a; line-height:1.75; font-size:0.91rem; margin:0; }
 
-    /* ── RIGHT CARD: Profile summary ── */
+    /* ── RIGHT card ── */
     .pv2-right {
-      border-radius: 14px;
-      overflow: hidden;
-      position: relative;
-      background-color: #1a1a1a;
-      background-size: cover;
-      background-position: center 20%;
+      border-radius: 14px; overflow: hidden;
+      position: relative; background-color: #1a1a1a;
+      background-size: cover; background-position: center 20%;
       box-shadow: 0 12px 40px rgba(0,0,0,0.32);
     }
     .pv2-right-overlay {
-      position: absolute;
-      inset: 0;
+      position: absolute; inset: 0;
       background: linear-gradient(160deg, rgba(5,5,5,0.95) 0%, rgba(20,20,20,0.88) 55%, rgba(5,5,5,0.92) 100%);
       z-index: 0;
     }
-    .pv2-right-content {
-      position: relative;
-      z-index: 1;
-      padding: 24px;
-    }
-
-    .pv2-avatar {
-      width: 80px; height: 80px;
-      border-radius: 50%; object-fit: cover;
-      border: 3px solid ${ORANGE};
-      display: block; margin-bottom: 14px;
-    }
-    .pv2-avatar-placeholder {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.12);
-      border: 3px solid ${ORANGE};
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,0.6); font-size: 1.8rem;
-      margin-bottom: 14px;
-    }
-    .pv2-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
-    .pv2-badge-featured {
-      display: inline-flex; align-items: center; gap: 5px;
-      background: rgba(201,98,26,0.28); color: #f0c89a;
-      border: 1px solid rgba(201,98,26,0.5);
-      font-size: 0.71rem; font-weight: 700; padding: 3px 10px; border-radius: 20px;
-    }
-    .pv2-badge-verified {
-      display: inline-flex; align-items: center; gap: 5px;
-      background: rgba(16,185,129,0.2); color: #6ee7b7;
-      border: 1px solid rgba(16,185,129,0.35);
-      font-size: 0.71rem; font-weight: 700; padding: 3px 10px; border-radius: 20px;
-    }
-    .pv2-name {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.35rem; font-weight: 900; color: #fff;
-      line-height: 1.15; margin: 0 0 4px;
-    }
-    .pv2-tagline { color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-bottom: 10px; }
-    .pv2-price-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: ${ORANGE}; color: #fff;
-      font-size: 0.8rem; font-weight: 700; padding: 5px 13px;
-      border-radius: 20px; margin-bottom: 14px;
-    }
-    .pv2-meta-strip { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
-    .pv2-meta-item { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: rgba(255,255,255,0.85); }
-    .pv2-meta-item i { color: ${ORANGE}; width: 14px; text-align: center; }
+    .pv2-right-content { position: relative; z-index: 1; padding: 20px; }
+    .pv2-avatar { width:72px; height:72px; border-radius:50%; object-fit:cover; border:3px solid ${ORANGE}; display:block; margin-bottom:12px; }
+    .pv2-avatar-placeholder { width:72px; height:72px; border-radius:50%; background:rgba(255,255,255,0.12); border:3px solid ${ORANGE}; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.6); font-size:1.6rem; margin-bottom:12px; }
+    .pv2-badges { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
+    .pv2-badge-featured { display:inline-flex; align-items:center; gap:4px; background:rgba(201,98,26,0.28); color:#f0c89a; border:1px solid rgba(201,98,26,0.5); font-size:0.69rem; font-weight:700; padding:3px 9px; border-radius:20px; }
+    .pv2-badge-verified  { display:inline-flex; align-items:center; gap:4px; background:rgba(16,185,129,0.2); color:#6ee7b7; border:1px solid rgba(16,185,129,0.35); font-size:0.69rem; font-weight:700; padding:3px 9px; border-radius:20px; }
+    .pv2-name { font-family:'Playfair Display',serif; font-size:clamp(1.1rem,2vw,1.3rem); font-weight:900; color:#fff; line-height:1.15; margin:0 0 4px; }
+    .pv2-tagline { color:rgba(255,255,255,0.7); font-size:0.83rem; margin-bottom:9px; }
+    .pv2-price-badge { display:inline-flex; align-items:center; gap:5px; background:${ORANGE}; color:#fff; font-size:0.78rem; font-weight:700; padding:5px 12px; border-radius:20px; margin-bottom:12px; }
+    .pv2-meta-strip { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+    .pv2-meta-item { display:flex; align-items:center; gap:7px; font-size:0.8rem; color:rgba(255,255,255,0.85); }
+    .pv2-meta-item i { color:${ORANGE}; width:13px; text-align:center; }
     .pv2-rating-bar {
-      display: flex; align-items: center; gap: 12px;
-      background: rgba(255,255,255,0.12);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 10px; padding: 12px 14px;
-      margin-bottom: 16px;
+      display:flex; align-items:center; gap:10px;
+      background:rgba(255,255,255,0.12); backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,0.2); border-radius:10px;
+      padding:10px 13px; margin-bottom:14px;
     }
-    .pv2-rating-num { font-size: 2rem; font-weight: 800; color: ${ORANGE}; line-height: 1; }
-    .pv2-rating-stars { color: ${ORANGE}; font-size: 0.95rem; letter-spacing: 1px; }
-    .pv2-rating-sub { font-size: 0.72rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+    .pv2-rating-num   { font-size:1.8rem; font-weight:800; color:${ORANGE}; line-height:1; }
+    .pv2-rating-stars { color:${ORANGE}; font-size:0.9rem; letter-spacing:1px; }
+    .pv2-rating-sub   { font-size:0.7rem; color:rgba(255,255,255,0.7); margin-top:2px; }
     .pv2-share-btn {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 14px; border-radius: 6px;
-      border: 1.5px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.1);
-      color: #fff; font-size: 0.78rem; font-weight: 600;
-      cursor: pointer; font-family: inherit; margin-bottom: 16px;
-      transition: background 0.15s;
+      display:inline-flex; align-items:center; gap:5px; padding:5px 13px; border-radius:6px;
+      border:1.5px solid rgba(255,255,255,0.5); background:rgba(255,255,255,0.1);
+      color:#fff; font-size:0.76rem; font-weight:600; cursor:pointer;
+      font-family:inherit; margin-bottom:14px; transition:background 0.15s;
     }
-    .pv2-share-btn:hover { background: rgba(255,255,255,0.22); }
+    .pv2-share-btn:hover { background:rgba(255,255,255,0.22); }
 
-    /* ── Contact accordion — DARKER for visibility ── */
-    .pv2-contact-accordion {
-      background: rgba(0,0,0,0.5);
-      border: 1.5px solid rgba(255,255,255,0.3);
-      border-radius: 10px;
-      overflow: hidden;
-      margin-top: 4px;
-    }
+    /* Contact accordion */
+    .pv2-contact-accordion { background:rgba(0,0,0,0.5); border:1.5px solid rgba(255,255,255,0.3); border-radius:10px; overflow:hidden; margin-top:4px; }
     .pv2-contact-toggle {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 13px 16px; cursor: pointer;
-      font-size: 0.85rem; font-weight: 700; color: #fff;
-      background: rgba(0,0,0,0.4); border: none; width: 100%;
-      font-family: inherit; transition: background 0.15s;
-      letter-spacing: 0.2px;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 14px; cursor:pointer; font-size:0.83rem; font-weight:700; color:#fff;
+      background:rgba(0,0,0,0.4); border:none; width:100%; font-family:inherit;
+      transition:background 0.15s; letter-spacing:0.2px;
     }
-    .pv2-contact-toggle:hover { background: rgba(0,0,0,0.6); }
-    .pv2-contact-toggle i.arrow { transition: transform 0.2s; font-size: 0.7rem; color: rgba(255,255,255,0.7); }
-    .pv2-contact-toggle i.arrow.open { transform: rotate(180deg); }
-    .pv2-contact-panel { padding: 0 16px 16px; display: none; background: rgba(0,0,0,0.35); }
-    .pv2-contact-panel.open { display: block; }
+    .pv2-contact-toggle:hover { background:rgba(0,0,0,0.6); }
+    .pv2-contact-toggle i.arrow { transition:transform 0.2s; font-size:0.68rem; color:rgba(255,255,255,0.7); }
+    .pv2-contact-toggle i.arrow.open { transform:rotate(180deg); }
+    .pv2-contact-panel { padding:0 14px 14px; display:none; background:rgba(0,0,0,0.35); }
+    .pv2-contact-panel.open { display:block; }
     .pv2-contact-row {
-      display: flex; align-items: center; gap: 12px;
-      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.15);
-      font-size: 0.84rem;
+      display:flex; align-items:center; gap:11px;
+      padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.15); font-size:0.82rem;
     }
-    .pv2-contact-row:last-child { border-bottom: none; padding-bottom: 0; }
-    .pv2-contact-row i { color: ${ORANGE}; width: 16px; text-align: center; flex-shrink: 0; font-size: 0.9rem; }
-    .pv2-contact-row-label { font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: rgba(255,255,255,0.5); display: block; }
-    .pv2-contact-row-val { color: #fff; font-weight: 600; font-size: 0.86rem; }
-    .pv2-contact-row a { color: #fbbf7a; text-decoration: none; font-weight: 600; }
-    .pv2-contact-row a:hover { text-decoration: underline; color: #fff; }
-    .pv2-upgrade-note {
-      background: rgba(201,98,26,0.2); border: 1px solid rgba(201,98,26,0.45);
-      border-radius: 8px; padding: 12px 16px; margin-top: 4px;
-      font-size: 0.8rem; color: rgba(255,255,255,0.8); text-align: center;
-    }
-    .pv2-upgrade-note strong { color: #f0c89a; }
+    .pv2-contact-row:last-child { border-bottom:none; padding-bottom:0; }
+    .pv2-contact-row i { color:${ORANGE}; width:15px; text-align:center; flex-shrink:0; font-size:0.88rem; }
+    .pv2-contact-row-label { font-size:0.64rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:rgba(255,255,255,0.5); display:block; }
+    .pv2-contact-row-val   { color:#fff; font-weight:600; font-size:0.84rem; word-break:break-all; }
+    .pv2-contact-row a     { color:#fbbf7a; text-decoration:none; font-weight:600; word-break:break-all; }
+    .pv2-contact-row a:hover { text-decoration:underline; color:#fff; }
+    .pv2-upgrade-note { background:rgba(201,98,26,0.2); border:1px solid rgba(201,98,26,0.45); border-radius:8px; padding:11px 14px; margin-top:4px; font-size:0.78rem; color:rgba(255,255,255,0.8); text-align:center; }
+    .pv2-upgrade-note strong { color:#f0c89a; }
 
     /* ── MIDDLE ROW ── */
-    .pv2-mid-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-    .pv2-card {
-      background: #ede9e3;
-      border: 1px solid #dedad4;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-    .pv2-card-gray {
-      background: #d6d0c8;
-      border: 1px solid #c8c2ba;
-    }
-    .pv2-qual-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-    .pv2-qual-list li { display: flex; align-items: flex-start; gap: 9px; font-size: 0.88rem; color: #3a3a3a; line-height: 1.5; }
-    .pv2-qual-list li i { color: ${ORANGE}; margin-top: 2px; flex-shrink: 0; }
-    .pv2-avail-pills { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; }
-    .pv2-avail-pill {
-      display: inline-flex; align-items: center; justify-content: center;
-      min-width: 46px; padding: 6px 10px; border-radius: 8px;
-      font-size: 0.78rem; font-weight: 600; line-height: 1;
-    }
-    .pv2-avail-on  { background: ${ORANGE}; color: #fff; }
-    .pv2-avail-off { background: #c8c2ba; color: #999; border: 1px solid #bab4ac; }
+    .pv2-mid-row { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-bottom:20px; }
+    .pv2-card { background:#ede9e3; border:1px solid #dedad4; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.04); }
+    .pv2-card-gray { background:#d6d0c8; border:1px solid #c8c2ba; }
+    .pv2-qual-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:9px; }
+    .pv2-qual-list li { display:flex; align-items:flex-start; gap:8px; font-size:0.86rem; color:#3a3a3a; line-height:1.5; }
+    .pv2-qual-list li i { color:${ORANGE}; margin-top:2px; flex-shrink:0; }
+    .pv2-avail-pills { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px; }
+    .pv2-avail-pill { display:inline-flex; align-items:center; justify-content:center; min-width:42px; padding:5px 9px; border-radius:8px; font-size:0.76rem; font-weight:600; line-height:1; }
+    .pv2-avail-on  { background:${ORANGE}; color:#fff; }
+    .pv2-avail-off { background:#c8c2ba; color:#999; border:1px solid #bab4ac; }
 
     /* ── Reviews ── */
-    .pv2-reviews { margin-bottom: 24px; }
-    .pv2-review-item {
-      background: #ede9e3; border-radius: 9px;
-      padding: 14px 16px; margin-bottom: 10px;
-      border-left: 3px solid ${ORANGE};
-    }
-    .pv2-review-stars { color: #f59e0b; font-size: 0.85rem; margin-bottom: 4px; }
-    .pv2-review-text  { font-size: 0.86rem; color: #555; font-style: italic; }
-    .pv2-review-name  { font-size: 0.74rem; color: #888; margin-top: 4px; font-weight: 600; }
+    .pv2-reviews { margin-bottom:20px; }
+    .pv2-review-item { background:#ede9e3; border-radius:9px; padding:13px 15px; margin-bottom:9px; border-left:3px solid ${ORANGE}; }
+    .pv2-review-stars { color:#f59e0b; font-size:0.83rem; margin-bottom:4px; }
+    .pv2-review-text  { font-size:0.84rem; color:#555; font-style:italic; }
+    .pv2-review-name  { font-size:0.72rem; color:#888; margin-top:4px; font-weight:600; }
 
-    /* ── BOTTOM: Send Enquiry — CENTERED heading ── */
-    .pv2-enquiry-section {
-      background: #ede9e3;
-      border: 1px solid #dedad4;
-      border-radius: 14px;
-      padding: 40px 36px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-    }
-    .pv2-enquiry-header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
-    .pv2-enquiry-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      gap: 16px;
-      align-items: end;
-      margin-bottom: 16px;
-    }
-    .pv2-enquiry-grid-wide {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-    .pv2-enquiry-field { display: flex; flex-direction: column; gap: 5px; }
-    .pv2-enquiry-field label {
-      font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.6px; color: #777;
-    }
+    /* ── Enquiry ── */
+    .pv2-enquiry-section { background:#ede9e3; border:1px solid #dedad4; border-radius:14px; padding:32px 28px; box-shadow:0 4px 16px rgba(0,0,0,0.06); }
+    .pv2-enquiry-header  { text-align:center; margin-bottom:24px; }
+    .pv2-enquiry-grid      { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:14px; align-items:end; margin-bottom:14px; }
+    .pv2-enquiry-grid-wide { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+    .pv2-enquiry-field { display:flex; flex-direction:column; gap:4px; }
+    .pv2-enquiry-field label { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:#777; }
     .pv2-enquiry-field input,
     .pv2-enquiry-field select,
     .pv2-enquiry-field textarea {
-      width: 100%; padding: 10px 13px;
-      border: 1.5px solid rgba(0,0,0,0.12); border-radius: 8px;
-      background: #fff; font-family: inherit; font-size: 0.88rem;
-      color: #1a1a1a; outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      width:100%; padding:10px 12px; border:1.5px solid rgba(0,0,0,0.12); border-radius:8px;
+      background:#fff; font-family:inherit; font-size:0.86rem; color:#1a1a1a; outline:none;
+      transition:border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance:none; appearance:none;
     }
     .pv2-enquiry-field input:focus,
     .pv2-enquiry-field select:focus,
-    .pv2-enquiry-field textarea:focus {
-      border-color: ${ORANGE};
-      box-shadow: 0 0 0 3px rgba(194,81,10,0.12);
-    }
-    .pv2-enquiry-field textarea { resize: vertical; min-height: 78px; }
+    .pv2-enquiry-field textarea:focus { border-color:${ORANGE}; box-shadow:0 0 0 3px rgba(194,81,10,0.12); }
+    .pv2-enquiry-field textarea { resize:vertical; min-height:72px; }
     .pv2-enquiry-send-btn {
-      width: 100%; padding: 12px 20px;
-      background: ${ORANGE}; color: #fff;
-      border: none; border-radius: 8px;
-      font-family: inherit; font-size: 0.9rem; font-weight: 700;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: background 0.15s, transform 0.12s;
-      box-shadow: 0 4px 14px rgba(194,81,10,0.3);
+      width:100%; padding:12px 20px; background:${ORANGE}; color:#fff;
+      border:none; border-radius:8px; font-family:inherit; font-size:0.88rem; font-weight:700;
+      cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:background 0.15s, transform 0.12s; box-shadow:0 4px 14px rgba(194,81,10,0.3);
     }
-    .pv2-enquiry-send-btn:hover { background: #a84412; transform: translateY(-1px); }
-    .pv2-enquiry-footer {
-      display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 4px;
-    }
-    .pv2-location-note {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 0.82rem; color: #666;
-    }
-    .pv2-location-note i { color: ${ORANGE}; }
+    .pv2-enquiry-send-btn:hover { background:#a84412; transform:translateY(-1px); }
+    .pv2-enquiry-footer { display:flex; align-items:center; justify-content:center; gap:18px; flex-wrap:wrap; margin-top:4px; }
+    .pv2-location-note { display:flex; align-items:center; gap:6px; font-size:0.8rem; color:#666; }
+    .pv2-location-note i { color:${ORANGE}; }
 
-    /* ── Responsive ── */
-    @media (max-width: 1024px) {
-      .pv2-top-grid { grid-template-columns: 60% 1fr; }
+    /* ══════════════════════════════════════
+       RESPONSIVE BREAKPOINTS
+    ══════════════════════════════════════ */
+
+    /* Tablet landscape */
+    @media (max-width: 1100px) {
+      .pv2-inner { padding: 20px 20px 48px; }
+      .pv2-top-grid { grid-template-columns: 58% 1fr; }
       .pv2-enquiry-grid { grid-template-columns: 1fr 1fr; }
     }
+
+    /* Tablet portrait — stack top grid */
     @media (max-width: 900px) {
       .pv2-top-grid { grid-template-columns: 1fr; }
-      .pv2-mid-row  { grid-template-columns: 1fr; }
+      .pv2-mid-row  { grid-template-columns: 1fr 1fr; }
+      /* Move right card above left on mobile */
+      .pv2-top-grid { display: flex; flex-direction: column; }
+      .pv2-right { order: -1; min-height: 280px; }
       .pv2-enquiry-grid { grid-template-columns: 1fr 1fr; }
     }
-    @media (max-width: 700px) {
-      .pv2-inner { padding: 16px 14px 48px; }
-      .pv2-services-section { padding: 20px 18px 16px; }
-      .pv2-about-section    { padding: 16px 18px 20px; }
-      .pv2-card             { padding: 18px; }
-      .pv2-enquiry-section  { padding: 28px 18px; }
+
+    /* Mobile */
+    @media (max-width: 640px) {
+      .pv2-inner { padding: 14px 14px 44px; }
+      .pv2-services-section { padding: 18px 16px 14px; }
+      .pv2-about-section    { padding: 14px 16px 18px; }
+      .pv2-card             { padding: 16px; }
+      .pv2-mid-row          { grid-template-columns: 1fr; gap:14px; }
+      .pv2-enquiry-section  { padding: 24px 16px; }
+      .pv2-enquiry-grid     { grid-template-columns: 1fr 1fr; gap:10px; }
+      .pv2-enquiry-grid-wide{ grid-template-columns: 1fr; }
+      .pv2-right-content    { padding: 16px; }
+      .pv2-gate-card        { padding: 28px 18px; }
+    }
+
+    /* Small phones */
+    @media (max-width: 480px) {
       .pv2-enquiry-grid     { grid-template-columns: 1fr; }
-      .pv2-enquiry-grid-wide { grid-template-columns: 1fr; }
-      .pv2-gate-card { padding: 32px 24px; }
+      .pv2-tag-cloud        { gap: 6px; }
+      .pv2-tag              { font-size: 0.78rem; padding: 5px 12px; }
+      .pv2-enquiry-send-btn { width: auto; padding-left:32px; padding-right:32px; }
     }
   `;
   document.head.appendChild(style);
@@ -580,13 +413,11 @@ const injectStyles = () => {
   }
 };
 
-// ── Members Only Gate Component ──
+// ── Members Only Gate ──
 const MembersOnlyGate = () => (
   <div className="pv2-members-gate">
     <div className="pv2-gate-card">
-      <div className="pv2-gate-icon">
-        <i className="fas fa-lock" />
-      </div>
+      <div className="pv2-gate-icon"><i className="fas fa-lock" /></div>
       <h1 className="pv2-gate-title">Members Only</h1>
       <p className="pv2-gate-subtitle">
         Provider profiles are exclusively available to registered members of the SA Homeschooling Directory community.
@@ -599,42 +430,37 @@ const MembersOnlyGate = () => (
       </div>
       <div className="pv2-gate-actions">
         <Link to="/login" className="pv2-gate-btn-primary">
-          <i className="fas fa-sign-in-alt" style={{ marginRight: 8 }} /> Log In to View Profile
+          <i className="fas fa-sign-in-alt" style={{ marginRight:8 }} /> Log In to View Profile
         </Link>
         <div className="pv2-gate-divider">or</div>
-        <Link to="/register" className="pv2-gate-btn-secondary">
-          Create a Free Account
-        </Link>
+        <Link to="/register" className="pv2-gate-btn-secondary">Create a Free Account</Link>
       </div>
     </div>
   </div>
 );
 
 const Profile = () => {
-  const [searchParams] = useSearchParams();
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [contactOpen, setContactOpen] = useState(false);
+  const [searchParams]   = useSearchParams();
+  const [profile, setProfile]           = useState(null);
+  const [loading, setLoading]           = useState(true);
+  const [contactOpen, setContactOpen]   = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
   const fromDashboard = searchParams.get('from') === 'dashboard';
 
   useEffect(() => {
-    // Check authentication
     try {
       const cu = JSON.parse(localStorage.getItem('sah_current_user'));
       setIsAuthenticated(!!cu);
-    } catch {
-      setIsAuthenticated(false);
-    }
+    } catch { setIsAuthenticated(false); }
   }, []);
 
   useEffect(() => {
     injectStyles();
-    const id = searchParams.get('id');
+    const id    = searchParams.get('id');
     const email = searchParams.get('email');
-    let found = findProvider(id, email);
+    let found   = findProvider(id, email);
     if (!found) {
       try {
         const cu = JSON.parse(localStorage.getItem('sah_current_user') || 'null');
@@ -647,94 +473,68 @@ const Profile = () => {
   }, [searchParams]);
 
   const shareProfile = () => {
-    if (navigator.share) {
-      navigator.share({ title: profile?.name, url: window.location.href });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
-    }
+    if (navigator.share) navigator.share({ title: profile?.name, url: window.location.href });
+    else { navigator.clipboard.writeText(window.location.href); alert('Link copied!'); }
   };
 
-  const handleBack = () => {
-    if (fromDashboard) navigate('/client-dashboard');
-    else navigate('/');
-  };
+  const handleBack = () => fromDashboard ? navigate('/client-dashboard') : navigate('/');
 
   if (loading) return (
-    <>
-      <Header />
-      <main style={{ padding: '4rem', textAlign: 'center' }}>Loading profile...</main>
-      <Footer />
-    </>
+    <><Header /><main style={{ padding:'4rem', textAlign:'center' }}>Loading profile...</main><Footer /></>
   );
 
   if (!profile) return (
-    <>
-      <Header />
-      <main style={{ padding: '4rem', textAlign: 'center' }}>
-        <h2>Profile not found</h2>
-        <Link to="/">Back to Home</Link>
-      </main>
-      <Footer />
-    </>
+    <><Header /><main style={{ padding:'4rem', textAlign:'center' }}><h2>Profile not found</h2><Link to="/">Back to Home</Link></main><Footer /></>
   );
 
-  // Show members-only gate for unauthenticated users (unless viewing from dashboard)
   if (!isAuthenticated && !fromDashboard) {
     return (
-      <>
-        <Header />
-        <main id="profilePageV2">
-          <MembersOnlyGate />
-        </main>
-        <Footer />
-      </>
+      <><Header /><main id="profilePageV2"><MembersOnlyGate /></main><Footer /></>
     );
   }
 
-  const tier = profile.listingPlan || profile.tier || 'free';
+  const tier   = profile.listingPlan || profile.tier || 'free';
   const isPaid = tier === 'pro' || tier === 'featured';
 
   const ratingStars = (r) => {
     if (!r) return '';
-    const full = Math.floor(r);
-    const half = r % 1 >= 0.5;
+    const full = Math.floor(r), half = r % 1 >= 0.5;
     return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(5 - full - (half ? 1 : 0));
   };
 
+  const DashHeader = () => (
+    <header style={{
+      position:'sticky', top:0, zIndex:1000,
+      height:'60px', background:'#5a5a5a',
+      boxShadow:'0 2px 12px rgba(0,0,0,0.22)',
+      display:'flex', alignItems:'center', flexShrink:0,
+    }}>
+      <div style={{ maxWidth:1280, margin:'0 auto', padding:'0 16px', width:'100%', display:'flex', alignItems:'center', justifyContent:'space-between', gap:8 }}>
+        <div style={{ display:'flex', alignItems:'center', minWidth:0, flex:1 }}>
+          <button onClick={handleBack} style={{ display:'inline-flex', alignItems:'center', gap:7, background:'none', border:'none', color:'rgba(255,255,255,0.88)', fontSize:'0.85rem', fontWeight:600, cursor:'pointer', padding:'6px 0', fontFamily:'inherit', whiteSpace:'nowrap', flexShrink:0 }}>
+            <i className="fas fa-arrow-left" /> Back to Dashboard
+          </button>
+          <span style={{ width:1, height:26, background:'rgba(255,255,255,0.28)', margin:'0 12px', flexShrink:0 }} />
+          <div style={{ minWidth:0 }}>
+            <span style={{ fontFamily:"'Playfair Display', serif", fontWeight:800, fontSize:'0.92rem', color:'#fff', display:'block', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>SA Homeschooling</span>
+            <span style={{ fontSize:'0.6rem', color:'rgba(255,255,255,0.68)', fontWeight:500, letterSpacing:'0.45px', display:'block' }}>Education Services Directory</span>
+          </div>
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:7, flexShrink:0 }}>
+          <button style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'6px 13px', borderRadius:6, border:'1.5px solid rgba(255,255,255,0.55)', background:'transparent', color:'#fff', fontWeight:600, fontSize:'0.82rem', cursor:'pointer', fontFamily:'inherit', maxWidth:130, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+            <i className="fas fa-user-circle" /> {profile?.name?.split(' ')[0] || 'Provider'}
+          </button>
+          <button onClick={() => { localStorage.removeItem('sah_current_user'); navigate('/'); }} style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'6px 14px', borderRadius:6, border:'none', background:'#c9621a', color:'#fff', fontWeight:700, fontSize:'0.82rem', cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap' }}>
+            <i className="fas fa-right-from-bracket" /> Log Out
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+
   return (
     <>
-      {fromDashboard ? (
-        <header style={{
-          position: 'sticky', top: 0, zIndex: 1000,
-          height: '68px', background: '#5a5a5a',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.22)',
-          display: 'flex', alignItems: 'center', flexShrink: 0,
-        }}>
-          <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <button onClick={handleBack} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', color: 'rgba(255,255,255,0.88)', fontSize: '0.88rem', fontWeight: 600, cursor: 'pointer', padding: '6px 0', fontFamily: 'inherit' }}>
-                <i className="fas fa-arrow-left" /> Back to Dashboard
-              </button>
-              <span style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.28)', margin: '0 16px' }} />
-              <div>
-                <span style={{ fontFamily: "'Playfair Display', serif", fontWeight: 800, fontSize: '1.02rem', color: '#fff', display: 'block' }}>SA Homeschooling</span>
-                <span style={{ fontSize: '0.66rem', color: 'rgba(255,255,255,0.68)', fontWeight: 500, letterSpacing: '0.45px', display: 'block' }}>Education Services Directory</span>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <button style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '7px 16px', borderRadius: 6, border: '1.5px solid rgba(255,255,255,0.55)', background: 'transparent', color: '#fff', fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}>
-                <i className="fas fa-user-circle" /> {profile?.name || 'Provider'}
-              </button>
-              <button onClick={() => { localStorage.removeItem('sah_current_user'); navigate('/'); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '7px 18px', borderRadius: 6, border: 'none', background: ORANGE, color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', fontFamily: 'inherit' }}>
-                <i className="fas fa-right-from-bracket" /> Log Out
-              </button>
-            </div>
-          </div>
-        </header>
-      ) : (
-        <Header />
-      )}
+      {fromDashboard ? <DashHeader /> : <Header />}
 
       <main id="profilePageV2">
         <div className="pv2-inner">
@@ -747,114 +547,69 @@ const Profile = () => {
               <div className="pv2-services-section">
                 <span className="pv2-eyebrow">What We Offer</span>
                 <h2 className="pv2-heading">Our Services</h2>
-
                 {profile.tags?.length > 0 && (
                   <div className="pv2-tag-cloud">
-                    {profile.tags.map((tag, idx) => (
-                      <span key={idx} className="pv2-tag">{tag}</span>
-                    ))}
+                    {profile.tags.map((tag, idx) => <span key={idx} className="pv2-tag">{tag}</span>)}
                   </div>
                 )}
-
                 {profile.services?.length > 0 ? (
-                  <div style={{ marginTop: profile.tags?.length > 0 ? 16 : 0 }}>
+                  <div style={{ marginTop: profile.tags?.length > 0 ? 14 : 0 }}>
                     {profile.services.map((svc, idx) => {
-                      if (typeof svc === 'string') {
-                        return <span key={idx} className="pv2-tag" style={{ marginRight: 8, marginBottom: 8, display: 'inline-flex' }}>{svc}</span>;
-                      }
+                      if (typeof svc === 'string') return <span key={idx} className="pv2-tag" style={{ marginRight:7, marginBottom:7, display:'inline-flex' }}>{svc}</span>;
                       return (
                         <div key={idx} className="pv2-svc-card">
-                          {svc.title && <div className="pv2-svc-title">{svc.title}</div>}
+                          {svc.title       && <div className="pv2-svc-title">{svc.title}</div>}
                           {svc.description && <div className="pv2-svc-desc">{svc.description}</div>}
                           <div className="pv2-svc-pills">
-                            {svc.subjects && svc.subjects.split(',').map((s, i) => s.trim() && (
-                              <span key={i} className="pv2-svc-pill-subj">{s.trim()}</span>
-                            ))}
-                            {(svc.ageGroups || []).map((age, i) => (
-                              <span key={i} className="pv2-svc-pill-age">{age}</span>
-                            ))}
+                            {svc.subjects && svc.subjects.split(',').map((s, i) => s.trim() && <span key={i} className="pv2-svc-pill-subj">{s.trim()}</span>)}
+                            {(svc.ageGroups || []).map((age, i) => <span key={i} className="pv2-svc-pill-age">{age}</span>)}
                           </div>
-                          {svc.deliveryMode && (
-                            <div className="pv2-svc-delivery">
-                              <i className="fas fa-laptop-house" />{svc.deliveryMode}
-                            </div>
-                          )}
+                          {svc.deliveryMode && <div className="pv2-svc-delivery"><i className="fas fa-laptop-house" />{svc.deliveryMode}</div>}
                         </div>
                       );
                     })}
                   </div>
                 ) : (
-                  !profile.tags?.length && (
-                    <p style={{ color: '#888', fontStyle: 'italic', fontSize: '0.88rem' }}>No services listed yet.</p>
-                  )
+                  !profile.tags?.length && <p style={{ color:'#888', fontStyle:'italic', fontSize:'0.86rem' }}>No services listed yet.</p>
                 )}
-
                 {profile.ageGroups?.length > 0 && (
                   <div className="pv2-age-section">
                     <span className="pv2-eyebrow">Age Groups / Grades</span>
                     <div className="pv2-age-pills">
-                      {profile.ageGroups.map((age, idx) => (
-                        <span key={idx} className="pv2-age-pill">{age}</span>
-                      ))}
+                      {profile.ageGroups.map((age, idx) => <span key={idx} className="pv2-age-pill">{age}</span>)}
                     </div>
                   </div>
                 )}
               </div>
-
               <div className="pv2-about-section">
                 <span className="pv2-eyebrow">About the Provider</span>
                 <h2 className="pv2-heading">About Us</h2>
-                <p className="pv2-about-text">
-                  {profile.bio || 'This provider has not yet added a description.'}
-                </p>
+                <p className="pv2-about-text">{profile.bio || 'This provider has not yet added a description.'}</p>
               </div>
             </div>
 
-            {/* RIGHT: Profile card */}
-            <div
-              className="pv2-right"
-              style={{ backgroundImage: profile.image ? `url(${profile.image})` : 'none' }}
-            >
+            {/* RIGHT: Profile summary card */}
+            <div className="pv2-right" style={{ backgroundImage: profile.image ? `url(${profile.image})` : 'none' }}>
               <div className="pv2-right-overlay" />
               <div className="pv2-right-content">
-
-                <button className="pv2-share-btn" onClick={shareProfile}>
-                  <i className="fas fa-share-alt" /> Share Profile
-                </button>
-
+                <button className="pv2-share-btn" onClick={shareProfile}><i className="fas fa-share-alt" /> Share Profile</button>
                 {profile.image || profile.photo
                   ? <img src={profile.image || profile.photo} alt={profile.name} className="pv2-avatar" />
                   : <div className="pv2-avatar-placeholder"><i className="fas fa-user" /></div>}
-
                 <div className="pv2-badges">
                   {tier === 'featured' && <span className="pv2-badge-featured"><i className="fas fa-star" /> Featured Partner</span>}
                   {isPaid && <span className="pv2-badge-verified"><i className="fas fa-check" /> Verified</span>}
                 </div>
-
                 <h1 className="pv2-name">{profile.name}</h1>
                 <p className="pv2-tagline">{profile.primaryCategory || profile.category || ''}</p>
-
                 {profile.startingPrice && profile.startingPrice !== 'Contact' && (
-                  <div className="pv2-price-badge">
-                    <i className="fas fa-tag" /> From {profile.startingPrice || profile.priceFrom}
-                  </div>
+                  <div className="pv2-price-badge"><i className="fas fa-tag" /> From {profile.startingPrice || profile.priceFrom}</div>
                 )}
-
                 <div className="pv2-meta-strip">
-                  <div className="pv2-meta-item">
-                    <i className="fas fa-tag" />
-                    <strong>{profile.primaryCategory || profile.category || 'Provider'}</strong>
-                  </div>
-                  <div className="pv2-meta-item">
-                    <i className="fas fa-map-marker-alt" />
-                    <span>{profile.city ? `${profile.city}, ${profile.province}` : profile.location || 'South Africa'}</span>
-                  </div>
-                  <div className="pv2-meta-item">
-                    <i className="fas fa-laptop-house" />
-                    <span>{profile.deliveryMode || profile.delivery || 'Online'}</span>
-                  </div>
+                  <div className="pv2-meta-item"><i className="fas fa-tag" /><strong>{profile.primaryCategory || profile.category || 'Provider'}</strong></div>
+                  <div className="pv2-meta-item"><i className="fas fa-map-marker-alt" /><span>{profile.city ? `${profile.city}, ${profile.province}` : profile.location || 'South Africa'}</span></div>
+                  <div className="pv2-meta-item"><i className="fas fa-laptop-house" /><span>{profile.deliveryMode || profile.delivery || 'Online'}</span></div>
                 </div>
-
                 {isPaid && profile.reviews?.average > 0 && (
                   <div className="pv2-rating-bar">
                     <div className="pv2-rating-num">{profile.reviews.average}</div>
@@ -864,82 +619,23 @@ const Profile = () => {
                     </div>
                   </div>
                 )}
-
-                {/* Contact Details Accordion */}
                 {isPaid ? (
                   <div className="pv2-contact-accordion">
                     <button className="pv2-contact-toggle" onClick={() => setContactOpen(o => !o)}>
-                      <span><i className="fas fa-address-book" style={{ marginRight: 8, color: ORANGE }} />Contact Details</span>
-                      <i className={`fas fa-chevron-down arrow ${contactOpen ? 'open' : ''}`} />
+                      <span><i className="fas fa-address-book" style={{ marginRight:8, color:ORANGE }} />Contact Details</span>
+                      <i className={`fas fa-chevron-down arrow${contactOpen ? ' open' : ''}`} />
                     </button>
-                    <div className={`pv2-contact-panel ${contactOpen ? 'open' : ''}`}>
-                      {profile.phone && (
-                        <div className="pv2-contact-row">
-                          <i className="fas fa-phone" />
-                          <div>
-                            <span className="pv2-contact-row-label">Phone</span>
-                            <span className="pv2-contact-row-val">{profile.phone}</span>
-                          </div>
-                        </div>
-                      )}
-                      {(profile.whatsapp || profile.phone) && (
-                        <div className="pv2-contact-row">
-                          <i className="fab fa-whatsapp" style={{ color: '#25d366' }} />
-                          <div>
-                            <span className="pv2-contact-row-label">WhatsApp</span>
-                            <span className="pv2-contact-row-val">{profile.whatsapp || profile.phone}</span>
-                          </div>
-                        </div>
-                      )}
-                      {(profile.contactEmail || profile.email) && (
-                        <div className="pv2-contact-row">
-                          <i className="fas fa-envelope" />
-                          <div>
-                            <span className="pv2-contact-row-label">Email</span>
-                            <a className="pv2-contact-row-val" href={`mailto:${profile.contactEmail || profile.email}`}>
-                              {profile.contactEmail || profile.email}
-                            </a>
-                          </div>
-                        </div>
-                      )}
-                      {(profile.website || profile.social) && (
-                        <div className="pv2-contact-row">
-                          <i className="fas fa-globe" />
-                          <div>
-                            <span className="pv2-contact-row-label">Website</span>
-                            <a className="pv2-contact-row-val" href={profile.website || profile.social} target="_blank" rel="noopener noreferrer">
-                              {profile.website || profile.social}
-                            </a>
-                          </div>
-                        </div>
-                      )}
-                      {profile.facebook && (
-                        <div className="pv2-contact-row">
-                          <i className="fab fa-facebook" style={{ color: '#1877f2' }} />
-                          <div>
-                            <span className="pv2-contact-row-label">Facebook</span>
-                            <a className="pv2-contact-row-val" href={profile.facebook} target="_blank" rel="noopener noreferrer">
-                              {profile.facebook}
-                            </a>
-                          </div>
-                        </div>
-                      )}
-                      <div className="pv2-contact-row" style={{ borderBottom: 'none' }}>
-                        <i className="fas fa-map-marker-alt" />
-                        <div>
-                          <span className="pv2-contact-row-label">Location</span>
-                          <span className="pv2-contact-row-val">
-                            {profile.city ? `${profile.city}, ${profile.province}` : profile.location || 'South Africa'}
-                          </span>
-                        </div>
-                      </div>
+                    <div className={`pv2-contact-panel${contactOpen ? ' open' : ''}`}>
+                      {profile.phone && <div className="pv2-contact-row"><i className="fas fa-phone" /><div><span className="pv2-contact-row-label">Phone</span><span className="pv2-contact-row-val">{profile.phone}</span></div></div>}
+                      {(profile.whatsapp || profile.phone) && <div className="pv2-contact-row"><i className="fab fa-whatsapp" style={{ color:'#25d366' }} /><div><span className="pv2-contact-row-label">WhatsApp</span><span className="pv2-contact-row-val">{profile.whatsapp || profile.phone}</span></div></div>}
+                      {(profile.contactEmail || profile.email) && <div className="pv2-contact-row"><i className="fas fa-envelope" /><div><span className="pv2-contact-row-label">Email</span><a className="pv2-contact-row-val" href={`mailto:${profile.contactEmail || profile.email}`}>{profile.contactEmail || profile.email}</a></div></div>}
+                      {(profile.website || profile.social) && <div className="pv2-contact-row"><i className="fas fa-globe" /><div><span className="pv2-contact-row-label">Website</span><a className="pv2-contact-row-val" href={profile.website || profile.social} target="_blank" rel="noopener noreferrer">{profile.website || profile.social}</a></div></div>}
+                      {profile.facebook && <div className="pv2-contact-row"><i className="fab fa-facebook" style={{ color:'#1877f2' }} /><div><span className="pv2-contact-row-label">Facebook</span><a className="pv2-contact-row-val" href={profile.facebook} target="_blank" rel="noopener noreferrer">{profile.facebook}</a></div></div>}
+                      <div className="pv2-contact-row" style={{ borderBottom:'none' }}><i className="fas fa-map-marker-alt" /><div><span className="pv2-contact-row-label">Location</span><span className="pv2-contact-row-val">{profile.city ? `${profile.city}, ${profile.province}` : profile.location || 'South Africa'}</span></div></div>
                     </div>
                   </div>
                 ) : (
-                  <div className="pv2-upgrade-note">
-                    <i className="fas fa-lock" style={{ marginRight: 6 }} />
-                    Upgrade to <strong>Trusted Provider</strong> to display your contact details.
-                  </div>
+                  <div className="pv2-upgrade-note"><i className="fas fa-lock" style={{ marginRight:6 }} />Upgrade to <strong>Trusted Provider</strong> to display your contact details.</div>
                 )}
               </div>
             </div>
@@ -951,12 +647,12 @@ const Profile = () => {
               <span className="pv2-eyebrow">Credentials</span>
               <h3 className="pv2-heading pv2-heading-sm">Qualifications</h3>
               <ul className="pv2-qual-list">
-                {profile.degrees     && <li><i className="fas fa-graduation-cap" />{profile.degrees}</li>}
+                {profile.degrees       && <li><i className="fas fa-graduation-cap" />{profile.degrees}</li>}
                 {profile.certifications && <li><i className="fas fa-certificate" />{profile.certifications}</li>}
-                {profile.memberships && <li><i className="fas fa-check-circle" />{profile.memberships}</li>}
-                {profile.clearance   && <li><i className="fas fa-shield-alt" />{profile.clearance}</li>}
+                {profile.memberships   && <li><i className="fas fa-check-circle" />{profile.memberships}</li>}
+                {profile.clearance     && <li><i className="fas fa-shield-alt" />{profile.clearance}</li>}
                 {!profile.degrees && !profile.certifications && !profile.memberships && !profile.clearance && (
-                  <li style={{ color: '#aaa', fontStyle: 'italic' }}>No qualifications listed yet.</li>
+                  <li style={{ color:'#aaa', fontStyle:'italic' }}>No qualifications listed yet.</li>
                 )}
               </ul>
             </div>
@@ -966,16 +662,10 @@ const Profile = () => {
               <div className="pv2-avail-pills">
                 {DAYS_OF_WEEK.map(day => {
                   const active = (profile.availabilityDays || []).includes(day);
-                  return (
-                    <span key={day} className={`pv2-avail-pill ${active ? 'pv2-avail-on' : 'pv2-avail-off'}`}>
-                      {day}
-                    </span>
-                  );
+                  return <span key={day} className={`pv2-avail-pill${active ? ' pv2-avail-on' : ' pv2-avail-off'}`}>{day}</span>;
                 })}
               </div>
-              <p style={{ fontSize: '0.82rem', color: '#777', margin: 0 }}>
-                {profile.availabilityNotes || 'Contact for availability'}
-              </p>
+              <p style={{ fontSize:'0.8rem', color:'#777', margin:0 }}>{profile.availabilityNotes || 'Contact for availability'}</p>
             </div>
           </div>
 
@@ -986,7 +676,7 @@ const Profile = () => {
               <h3 className="pv2-heading pv2-heading-sm">Parent Reviews</h3>
               {profile.reviews.items.map((review, idx) => (
                 <div key={idx} className="pv2-review-item">
-                  <div className="pv2-review-stars">{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</div>
+                  <div className="pv2-review-stars">{'★'.repeat(review.rating)}{'☆'.repeat(5-review.rating)}</div>
                   <div className="pv2-review-text">"{review.text}"</div>
                   <div className="pv2-review-name">— {review.reviewer}</div>
                 </div>
@@ -994,38 +684,21 @@ const Profile = () => {
             </div>
           )}
 
-          {/* BOTTOM: Send Enquiry — Centered heading */}
+          {/* Enquiry */}
           <div className="pv2-enquiry-section">
-            {/* CENTERED header */}
             <div className="pv2-enquiry-header">
-              <span className="pv2-eyebrow" style={{ display: 'block', textAlign: 'center' }}>Get in Touch</span>
-              <h2 className="pv2-heading" style={{ textAlign: 'center', marginBottom: 8 }}>Send an Enquiry</h2>
-              <p style={{ fontSize: '0.88rem', color: '#777', textAlign: 'center' }}>
+              <span className="pv2-eyebrow" style={{ display:'block', textAlign:'center' }}>Get in Touch</span>
+              <h2 className="pv2-heading" style={{ textAlign:'center', marginBottom:6 }}>Send an Enquiry</h2>
+              <p style={{ fontSize:'0.86rem', color:'#777', textAlign:'center' }}>
                 Fill in your details below and we'll connect you with {profile.name || 'this provider'}.
               </p>
             </div>
-
-            {/* Row 1: Name + Email + Phone */}
             <div className="pv2-enquiry-grid">
-              <div className="pv2-enquiry-field">
-                <label>First Name</label>
-                <input type="text" placeholder="Sarah" />
-              </div>
-              <div className="pv2-enquiry-field">
-                <label>Last Name</label>
-                <input type="text" placeholder="Smith" />
-              </div>
-              <div className="pv2-enquiry-field">
-                <label>Email Address</label>
-                <input type="email" placeholder="sarah@email.com" />
-              </div>
-              <div className="pv2-enquiry-field">
-                <label>Phone Number</label>
-                <input type="tel" placeholder="082 000 0000" />
-              </div>
+              <div className="pv2-enquiry-field"><label>First Name</label><input type="text" placeholder="Sarah" /></div>
+              <div className="pv2-enquiry-field"><label>Last Name</label><input type="text" placeholder="Smith" /></div>
+              <div className="pv2-enquiry-field"><label>Email Address</label><input type="email" placeholder="sarah@email.com" /></div>
+              <div className="pv2-enquiry-field"><label>Phone Number</label><input type="tel" placeholder="082 000 0000" /></div>
             </div>
-
-            {/* Row 2: Subject + Message */}
             <div className="pv2-enquiry-grid-wide">
               <div className="pv2-enquiry-field">
                 <label>Subject</label>
@@ -1042,16 +715,14 @@ const Profile = () => {
                 <textarea placeholder="Hi, I'd like to know more about your services…" />
               </div>
             </div>
-
-            {/* Send + location — centered */}
             <div className="pv2-enquiry-footer">
-              <button className="pv2-enquiry-send-btn" style={{ width: 'auto', paddingLeft: 40, paddingRight: 40 }} onClick={() => alert('Enquiry sent! (Demo)')}>
+              <button className="pv2-enquiry-send-btn" style={{ width:'auto', paddingLeft:36, paddingRight:36 }} onClick={() => alert('Enquiry sent! (Demo)')}>
                 <i className="fas fa-paper-plane" /> Send Enquiry
               </button>
               {profile.city && (
                 <div className="pv2-location-note">
                   <i className="fas fa-map-marker-alt" />
-                  {profile.city}, {profile.province} · {profile.serviceAreaType === 'national' ? 'National coverage' : profile.serviceAreaType === 'online' ? 'Online only' : `Local — ${profile.radius || ''} radius`}
+                  {profile.city}, {profile.province}
                 </div>
               )}
             </div>
